@@ -5,11 +5,10 @@ import { secureHeaders } from "hono/secure-headers";
 import type { FC } from "hono/jsx";
 
 // ── Features ────────────────────────────────────────────
-// Comment out any feature import to remove it. No side effects.
-import { todosRoute } from "./features/todos";
+// Import and mount your feature routes here:
+// import { postsRoute } from "./features/posts";
 
 // ── Auth (opt-in) ───────────────────────────────────────
-// Delete the import & route below if you don't need auth.
 // import { auth } from "./lib/auth";
 
 // ── App ─────────────────────────────────────────────────
@@ -36,7 +35,7 @@ app.use(
 
 // ── Layout ──────────────────────────────────────────────
 const Layout: FC<{ title?: string }> = ({ title, children }) => (
-  <html lang="en" data-theme="dark">
+  <html lang="en" data-theme="thrust">
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -44,7 +43,7 @@ const Layout: FC<{ title?: string }> = ({ title, children }) => (
       <link rel="stylesheet" href="/static/style.css" />
       <script src="https://unpkg.com/htmx.org@2.0.4" />
     </head>
-    <body class="min-h-screen bg-base-200">
+    <body class="min-h-screen bg-base-100">
       <div class="container mx-auto max-w-2xl p-4">{children}</div>
     </body>
   </html>
@@ -54,16 +53,17 @@ const Layout: FC<{ title?: string }> = ({ title, children }) => (
 app.get("/", (c) =>
   c.html(
     <Layout title="Thrust">
-      <div class="hero py-12">
+      <div class="hero min-h-[80vh]">
         <div class="hero-content text-center">
-          <div>
-            <h1 class="text-5xl font-bold">🚀 Thrust</h1>
-            <p class="py-4 text-lg opacity-70">
+          <div class="max-w-md">
+            <h1 class="text-6xl font-bold text-primary">Thrust</h1>
+            <p class="py-6 text-lg text-base-content/60">
               Maximum Velocity, Minimal Drag.
             </p>
-            <a href="/todos" class="btn btn-primary">
-              Go to Todos →
-            </a>
+            <p class="text-sm text-base-content/40">
+              Add your first feature in{" "}
+              <code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">src/features/</code>
+            </p>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ app.get("/", (c) =>
 );
 
 // ── Mount Features ──────────────────────────────────────
-app.route("/todos", todosRoute);
+// app.route("/posts", postsRoute);
 
 // ── Auth Route (opt-in) ─────────────────────────────────
 // app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));

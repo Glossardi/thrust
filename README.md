@@ -34,8 +34,8 @@ src/
 │   ├── db.ts              ← Drizzle + bun:sqlite (opt-in)
 │   └── auth.ts            ← Better Auth (opt-in)
 └── features/
-    ├── todos.tsx           ← Route + UI + DB logic in ONE file
-    └── todos.test.ts       ← Colocated test
+    ├── [feature].tsx       ← Route + UI + DB logic in ONE file
+    └── [feature].test.ts   ← Colocated test
 ```
 
 ### Locality of Behavior
@@ -45,11 +45,10 @@ Every feature is a **single file** in `src/features/`. Route handlers, JSX compo
 
 ### Want a minimal static site?
 1. Delete `src/lib/`
-2. Comment out the feature imports in `src/index.tsx`
-3. You now have a pure Hono SSR server. Add your own routes.
+2. You now have a pure Hono SSR server. Add your own routes in `src/index.tsx`.
 
 ### Want a full SaaS?
-Keep everything. Add features in `src/features/`. Auth is already wired via Better Auth.
+Keep everything. Add features in `src/features/`, tables in `src/lib/db.ts`. Auth is ready via Better Auth.
 
 ## Tech Stack
 
@@ -61,7 +60,7 @@ Keep everything. Add features in `src/features/`. Auth is already wired via Bett
 | Interactivity | **HTMX** | HTML-over-the-wire, no client JS framework |
 | Database | **bun:sqlite + Drizzle** | Embedded, zero setup, type-safe |
 | Auth | **Better Auth** | Simple, framework-agnostic |
-| Styling | **Tailwind v4 + DaisyUI** | Utility-first + component classes |
+| Styling | **Tailwind v4 + DaisyUI** | Utility-first + custom "thrust" theme |
 | Security | **Hono CSRF + Secure Headers** | On by default |
 
 ## Philosophy
@@ -69,7 +68,7 @@ Keep everything. Add features in `src/features/`. Auth is already wired via Bett
 1. **AI-first DX** — Small files, colocated logic, minimal context needed
 2. **TDD by default** — Tests live next to features. Agents verify before humans review.
 3. **Zero config** — No webpack, no vite, no next.config.js. Just `bun dev`.
-4. **Opt-in complexity** — Start minimal, add DB/Auth when you need it.
+4. **Opt-in complexity** — Start with a blank canvas, add DB/Auth when you need it.
 
 ## License
 

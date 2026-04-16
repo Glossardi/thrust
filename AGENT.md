@@ -11,8 +11,8 @@ You are an AI coding agent working on a **Thrust** application. Follow these rul
 
 ```
 src/features/
-├── todos.tsx        ← route + UI + logic
-├── todos.test.ts    ← tests for todos
+├── posts.tsx        ← route + UI + logic
+├── posts.test.ts    ← tests for posts
 ├── users.tsx        ← route + UI + logic
 └── users.test.ts    ← tests for users
 ```
