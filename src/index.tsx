@@ -19,6 +19,12 @@ const app = new Hono();
 app.use("*", csrf());
 app.use("*", secureHeaders());
 
+// ── Error Handler (dev-friendly) ────────────────────────
+app.onError((err, c) => {
+  console.error(`❌ ${c.req.method} ${c.req.path}:`, err.message);
+  return c.text(`Error: ${err.message}`, 500);
+});
+
 // ── Static Assets ───────────────────────────────────────
 app.use(
   "/static/*",

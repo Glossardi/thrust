@@ -1,4 +1,5 @@
 import { Database } from "bun:sqlite";
+import { mkdirSync } from "node:fs";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
@@ -10,6 +11,7 @@ export const todos = sqliteTable("todos", {
 });
 
 // ── Connection ──────────────────────────────────────────
+mkdirSync("data", { recursive: true });
 const sqlite = new Database("data/app.db", { create: true });
 sqlite.exec("PRAGMA journal_mode = WAL;");
 

@@ -23,6 +23,7 @@ Open [http://localhost:3000](http://localhost:3000). That's it.
 | `bun test --watch` | Run tests in watch mode |
 | `bun run build:css` | Build Tailwind CSS → `public/style.css` |
 | `bun run db:push` | Push Drizzle schema to SQLite |
+| `bun run db:reset` | Delete and recreate the database |
 
 ## Architecture
 
