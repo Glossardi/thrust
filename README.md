@@ -31,7 +31,8 @@ Open [http://localhost:3000](http://localhost:3000). That's it.
 src/
 ├── index.tsx              ← App entry, layout, security, mounts features
 ├── lib/
-│   ├── db.ts              ← Drizzle + bun:sqlite (opt-in)
+│   ├── schema.ts          ← Drizzle table definitions (opt-in)
+│   ├── db.ts              ← bun:sqlite connection (opt-in)
 │   └── auth.ts            ← Better Auth (opt-in)
 └── features/
     ├── [feature].tsx       ← Route + UI + DB logic in ONE file

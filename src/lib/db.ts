@@ -1,17 +1,9 @@
 import { Database } from "bun:sqlite";
 import { mkdirSync } from "node:fs";
 import { drizzle } from "drizzle-orm/bun-sqlite";
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-// ── Schema ──────────────────────────────────────────────
-// Add your tables here. Example:
-//
-// export const posts = sqliteTable("posts", {
-//   id: integer("id").primaryKey({ autoIncrement: true }),
-//   title: text("title").notNull(),
-//   content: text("content").notNull().default(""),
-//   createdAt: text("createdAt").notNull().$defaultFn(() => new Date().toISOString()),
-// });
+// Re-export all schemas so features can import from db.ts
+export * from "./schema";
 
 // ── Connection ──────────────────────────────────────────
 mkdirSync("data", { recursive: true });
@@ -22,6 +14,7 @@ export const db = drizzle(sqlite);
 
 // ── Auto-migrate (dev convenience) ──────────────────────
 // Add CREATE TABLE IF NOT EXISTS statements here when you add tables.
+// These run on every app start and are safe to re-run (idempotent).
 // Example:
 // sqlite.exec(`
 //   CREATE TABLE IF NOT EXISTS posts (
