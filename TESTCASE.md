@@ -110,8 +110,8 @@ Score each dimension **0-3**. Total possible: **30 points**.
 |-------|----------|
 | 0 | Tests don't run (import errors, syntax errors) |
 | 1 | Some tests pass, some fail |
-| 2 | All tests pass, but existing todo tests broke |
-| 3 | All new AND existing tests pass (8 old + 8+ new) |
+| 2 | All tests pass, but existing app tests broke |
+| 3 | All new AND existing tests pass (2 base + 8+ new) |
 
 ### 5. Code Quality (0-3)
 | Score | Criteria |
@@ -183,7 +183,7 @@ The feature creates a sub-router (`new Hono()`), but when mounted at `/notes`, a
 **Watch for:** HTMX targeting wrong URLs because the agent used relative paths.
 
 ### Pitfall 4: Layout Import Cycle
-`todos.tsx` imports `Layout` from `../index`. If the agent doesn't realize `index.tsx` exports `Layout`, they might duplicate the full HTML boilerplate.
+The existing `app.test.ts` imports `Layout` from `../index`. If the agent doesn't realize `index.tsx` exports `Layout`, they might duplicate the full HTML boilerplate.
 
 **Watch for:** Duplicated `<html><head>...</head>` in the notes feature instead of using the shared Layout.
 
