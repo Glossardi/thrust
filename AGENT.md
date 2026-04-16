@@ -131,3 +131,44 @@ app.get("/", (c) => {
   <button type="submit">Add</button>
 </form>
 ```
+
+## Pitfalls — Read Before Coding
+
+These are common mistakes. Avoid them.
+
+### CSRF on Mutating Requests
+Thrust enables CSRF protection globally. In **tests**, all `POST`, `PATCH`, `PUT`, `DELETE` requests need an `Origin` header or they'll get a `403`:
+```ts
+// ❌ Will return 403
+const res = await app.request("/items", { method: "POST", body: form });
+
+// ✅ Correct
+const res = await app.request("/items", {
+  method: "POST",
+  headers: { Origin: "http://localhost" },
+  body: form,
+});
+```
+
+### Drizzle + bun:sqlite: Use `.get()` After `.returning()`
+With bun:sqlite, `.returning()` alone is **not** iterable. Always chain `.get()` for a single row:
+```ts
+// ❌ Runtime crash: "is not iterable"
+const [created] = db.insert(items).values({ name }).returning();
+
+// ✅ Correct
+const created = db.insert(items).values({ name }).returning().get();
+```
+
+### HTMX: Use Absolute Paths in `hx-*` Attributes
+Feature routes are mounted on sub-paths (e.g., `/notes`). HTMX attributes must use **full absolute paths**, not relative:
+```tsx
+// ❌ Resolves to current page path, not /notes/5
+hx-delete="/5"
+
+// ✅ Correct
+hx-delete={`/notes/${id}`}
+```
+
+### HTMX: Partial Swaps Lose Surrounding State
+When using `hx-target` to replace only part of a page (e.g., a list), any UI state *outside* that target (dropdown selections, scroll position) is preserved. But if you accidentally swap a **parent** element that contains both the control and the list, the control resets. Keep your `hx-target` as narrow as possible.

@@ -3,7 +3,10 @@ data/
 drizzle/
 public/style.css
 bun.lock
+tmp-npm-cache/
+testcase-run/
 *.db
 *.db-journal
 *.db-wal
+*.db-shm
 .DS_Store
