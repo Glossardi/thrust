@@ -74,7 +74,8 @@ You **must** update `STATE.md`. Keep it as a flat bullet list. Minimal tokens.
 | Layer | File | Purpose |
 |-------|------|---------|
 | Entry | `src/index.tsx` | Mounts security, static files, features |
-| DB | `src/lib/db.ts` | Drizzle schema + bun:sqlite connection |
+| Schema | `src/lib/schema.ts` | Drizzle table definitions (no runtime deps) |
+| DB | `src/lib/db.ts` | bun:sqlite connection, re-exports schema |
 | Auth | `src/lib/auth.ts` | Better Auth config |
 | Features | `src/features/*.tsx` | Self-contained feature slices |
 | Tests | `src/features/*.test.ts` | Colocated bun:test files |
@@ -90,7 +91,8 @@ touch src/features/notes.test.ts
 # 3. Create feature
 touch src/features/notes.tsx
 
-# 4. Add DB table to src/lib/db.ts (if needed)
+# 4. Add DB table to src/lib/schema.ts (if needed)
+#    Add matching CREATE TABLE to src/lib/db.ts auto-migrate section
 
 # 5. Mount route in src/index.tsx:
 #    import { notesRoute } from "./features/notes";
