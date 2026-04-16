@@ -22,7 +22,6 @@ Open [http://localhost:3000](http://localhost:3000). That's it.
 | `bun test` | Run all tests once |
 | `bun test --watch` | Run tests in watch mode |
 | `bun run build:css` | Build Tailwind CSS → `public/style.css` |
-| `bun run db:push` | Push Drizzle schema to SQLite |
 | `bun run db:reset` | Delete and recreate the database |
 
 ## Architecture
@@ -31,8 +30,7 @@ Open [http://localhost:3000](http://localhost:3000). That's it.
 src/
 ├── index.tsx              ← App entry, layout, security, mounts features
 ├── lib/
-│   ├── schema.ts          ← Drizzle table definitions (opt-in)
-│   ├── db.ts              ← bun:sqlite connection (opt-in)
+│   ├── db.ts              ← Schema + bun:sqlite connection (opt-in)
 │   └── auth.ts            ← Better Auth (opt-in)
 └── features/
     ├── [feature].tsx       ← Route + UI + DB logic in ONE file
@@ -59,10 +57,22 @@ Keep everything. Add features in `src/features/`, tables in `src/lib/db.ts`. Aut
 | Server | **Hono** | Ultra-fast, JSX support, middleware ecosystem |
 | UI | **Hono JSX** | Server-rendered HTML, zero bundle, zero hydration |
 | Interactivity | **HTMX** | HTML-over-the-wire, no client JS framework |
-| Database | **bun:sqlite + Drizzle** | Embedded, zero setup, type-safe |
+| Database | **bun:sqlite + Drizzle ORM** | Embedded, zero setup, type-safe |
 | Auth | **Better Auth** | Simple, framework-agnostic |
 | Styling | **Tailwind v4 + DaisyUI** | Utility-first + custom "thrust" theme |
 | Security | **Hono CSRF + Secure Headers** | On by default |
+
+## Database
+
+Thrust uses `bun:sqlite` (zero deps, built into Bun) with Drizzle ORM for type-safe queries.
+
+**Schema + auto-migrate lives in one file:** `src/lib/db.ts`. Define your Drizzle table, add a matching `CREATE TABLE IF NOT EXISTS`, done. Tables are created automatically on app start.
+
+**Need production migrations?** Add `drizzle-kit` when you're ready:
+```bash
+bun add -d drizzle-kit better-sqlite3
+```
+Then create a `drizzle.config.ts` pointing to your schema. See [Drizzle Kit docs](https://orm.drizzle.team/kit-docs/overview).
 
 ## Philosophy
 

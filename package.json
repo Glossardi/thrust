@@ -8,7 +8,6 @@
     "test": "bun test src/",
     "test:watch": "bun test --watch src/",
     "build:css": "bunx @tailwindcss/cli -i tailwind.css -o public/style.css",
-    "db:push": "mkdir -p data && drizzle-kit push",
     "db:reset": "rm -rf data/app.db data/app.db-wal data/app.db-shm && echo '✓ Database reset'"
   },
   "dependencies": {
@@ -20,9 +19,7 @@
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.0",
     "@types/bun": "^1.2.0",
-    "better-sqlite3": "^12.9.0",
     "daisyui": "^5.0.0",
-    "drizzle-kit": "^0.31.0",
     "tailwindcss": "^4.1.0"
   }
 }
