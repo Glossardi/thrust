@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --watch src/index.tsx",
-    "test": "bun test",
-    "test:watch": "bun test --watch",
+    "test": "bun test src/",
+    "test:watch": "bun test --watch src/",
     "build:css": "bunx @tailwindcss/cli -i tailwind.css -o public/style.css",
     "db:push": "drizzle-kit push",
     "db:reset": "rm -rf data/app.db data/app.db-wal data/app.db-shm && echo '✓ Database reset'"

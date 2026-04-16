@@ -31,9 +31,9 @@ This is **mandatory**. Follow this exact workflow for every new feature:
 
 1. **Create the test file first:** `src/features/[feature].test.ts`
 2. **Write failing tests** that describe the expected behavior (HTTP status, HTML content).
-3. **Run `bun test`** — confirm the tests fail.
+3. **Run `bun test src/`** — confirm the tests fail.
 4. **Implement the feature** in `src/features/[feature].tsx`.
-5. **Run `bun test`** — confirm all tests pass.
+5. **Run `bun test src/`** — confirm all tests pass.
 6. **Never tell the user "done" until tests pass.**
 
 ### Test Pattern
@@ -98,7 +98,7 @@ touch src/features/notes.tsx
 
 # 6. Update STATE.md
 
-# 7. Run: bun test — all green? Done.
+# 7. Run: bun test src/ — all green? Done.
 ```
 
 ## Common Patterns
