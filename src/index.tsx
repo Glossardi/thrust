@@ -4,27 +4,27 @@ import { csrf } from "hono/csrf";
 import { secureHeaders } from "hono/secure-headers";
 import { Layout } from "./lib/layout";
 
-// ── Features ────────────────────────────────────────────
+// Features
 // Import and mount your feature routes here:
 // import { postsRoute } from "./features/posts";
 
-// ── Auth (opt-in) ───────────────────────────────────────
+// Auth (opt-in)
 // import { auth } from "./lib/auth";
 
-// ── App ─────────────────────────────────────────────────
+// App
 const app = new Hono();
 
-// ── Security ────────────────────────────────────────────
+// Security
 app.use("*", csrf());
 app.use("*", secureHeaders());
 
-// ── Error Handler (dev-friendly) ────────────────────────
+// Error handler
 app.onError((err, c) => {
   console.error(`Error ${c.req.method} ${c.req.path}:`, err.message);
   return c.text(`Error: ${err.message}`, 500);
 });
 
-// ── Static Assets ───────────────────────────────────────
+// Static assets
 app.use(
   "/static/*",
   serveStatic({
@@ -33,7 +33,7 @@ app.use(
   })
 );
 
-// ── Home ────────────────────────────────────────────────
+// Home
 app.get("/", (c) =>
   c.html(
     <Layout title="Thrust">
@@ -55,16 +55,16 @@ app.get("/", (c) =>
   )
 );
 
-// ── Mount Features ──────────────────────────────────────
+// Mount features
 // app.route("/posts", postsRoute);
 
-// ── Auth Route (opt-in) ─────────────────────────────────
+// Auth route (opt-in)
 // app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
 
-// ── Export for testing ──────────────────────────────────
+// Export for testing
 export { app };
 
-// ── Start Server ────────────────────────────────────────
+// Start server
 const port = Number(process.env.PORT) || 3000;
 console.log(`Thrust running at http://localhost:${port}`);
 

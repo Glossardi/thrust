@@ -8,12 +8,15 @@ Run from the repo root:
 bun run create-thrust:sync
 bun run test
 bun run build:css
+bun run create-thrust:variant-test
+bun run create-thrust:pack-test
 ```
 
-Then validate the package tarball:
+Optional final registry dry-run:
 
 ```bash
-bun run create-thrust:pack-test
+cd packages/create-thrust
+npm publish --dry-run --access public
 ```
 
 ## Publish

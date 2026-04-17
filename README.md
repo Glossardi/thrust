@@ -18,7 +18,7 @@ Open [http://localhost:3000](http://localhost:3000). That's it.
 
 ## Scaffolder
 
-The `create-thrust` scaffolder now lives in this repository under `packages/create-thrust/`.
+The `create-thrust` scaffolder lives in this repository under `packages/create-thrust/`.
 
 Local usage while developing the framework:
 
@@ -26,7 +26,7 @@ Local usage while developing the framework:
 node packages/create-thrust/bin/create-thrust.js my-app
 ```
 
-Planned public install path:
+Planned public install path after the first npm release:
 
 ```bash
 bunx create-thrust my-app
@@ -35,11 +35,11 @@ bunx create-thrust my-app
 ## Commands
 
 | Command | What it does |
-|---------|-------------|
+|---------|--------------|
 | `bun dev` | Start dev server with hot-reload |
 | `bun test` | Run all tests once |
 | `bun test --watch` | Run tests in watch mode |
-| `bun run build:css` | Build Tailwind CSS → `public/style.css` |
+| `bun run build:css` | Build Tailwind CSS to `public/style.css` |
 | `bun run db:reset` | Delete and recreate the database |
 
 ## Scaffolder variants
@@ -52,22 +52,22 @@ node packages/create-thrust/bin/create-thrust.js my-app --auth   # include db.ts
 
 ## Architecture
 
-```
+```text
 src/
-├── index.tsx              ← App entry, security, mounts features
-├── lib/
-│   ├── layout.tsx          ← Shared HTML layout (import in features)
-│   ├── db.ts              ← Schema + bun:sqlite connection (opt-in)
-│   └── auth.ts            ← Better Auth (opt-in)
-└── features/
-    ├── [feature].tsx       ← Route + UI + DB logic in ONE file
-    └── [feature].test.ts   ← Colocated test
+|- index.tsx              # App entry, security, mounts features
+|- lib/
+|  |- layout.tsx          # Shared HTML layout (import in features)
+|  |- db.ts               # Schema + bun:sqlite connection (opt-in)
+|  `- auth.ts             # Better Auth (opt-in)
+`- features/
+   |- [feature].tsx       # Route + UI + DB logic in one file
+   `- [feature].test.ts   # Colocated test
 ```
 
 ### Locality of Behavior
-Every feature is a **single file** in `src/features/`. Route handlers, JSX components, and DB queries live together. No hunting across 5 directories.
+Every feature is a **single file** in `src/features/`. Route handlers, JSX components, and DB queries live together. No hunting across multiple directories.
 
-## Modularity — Use What You Need
+## Modularity: Use What You Need
 
 ### Want a minimal static site?
 1. Keep `src/lib/layout.tsx`
@@ -104,10 +104,10 @@ Then create a `drizzle.config.ts` pointing to your schema. See [Drizzle Kit docs
 
 ## Philosophy
 
-1. **AI-first DX** — Small files, colocated logic, minimal context needed
-2. **TDD by default** — Tests live next to features. Agents verify before humans review.
-3. **Zero config** — No webpack, no vite, no next.config.js. Just `bun dev`.
-4. **Opt-in complexity** — Start with a blank canvas, add DB/Auth when you need it.
+1. **AI-first DX** - Small files, colocated logic, minimal context needed
+2. **TDD by default** - Tests live next to features. Agents verify before humans review.
+3. **Zero config** - No webpack, no vite, no next.config.js. Just `bun dev`.
+4. **Opt-in complexity** - Start with a blank canvas, add DB/Auth when you need it.
 
 ## License
 

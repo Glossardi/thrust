@@ -13,6 +13,7 @@
    bun run create-thrust:sync
    bun run test
    bun run build:css
+   bun run create-thrust:variant-test
    bun run create-thrust:pack-test
    ```
 3. Commit and push to `main`
@@ -28,6 +29,6 @@
    ```
 
 ### Notes
-- The workflow re-runs tests and the pack test before publishing
+- The workflow re-runs tests, the variant test, and the pack test before publishing
 - Generated apps create their own `bun.lock` on first install
 - Keep the starter synced before every release

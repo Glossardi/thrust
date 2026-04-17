@@ -1,4 +1,4 @@
-# AGENT.md — The Thrust Agent Protocol
+# AGENT.md - The Thrust Agent Protocol
 
 You are an AI coding agent working on a **Thrust** application. Follow these rules strictly.
 
@@ -9,12 +9,12 @@ You are an AI coding agent working on a **Thrust** application. Follow these rul
 - **Never** scatter a feature across multiple directories.
 - Name files as `[feature].tsx` with a colocated `[feature].test.ts`.
 
-```
+```text
 src/features/
-├── posts.tsx        ← route + UI + logic
-├── posts.test.ts    ← tests for posts
-├── users.tsx        ← route + UI + logic
-└── users.test.ts    ← tests for users
+|- posts.tsx        # route + UI + logic
+|- posts.test.ts    # tests for posts
+|- users.tsx        # route + UI + logic
+`- users.test.ts    # tests for users
 ```
 
 ## Rule 2: No Client-Side State
@@ -31,9 +31,9 @@ This is **mandatory**. Follow this exact workflow for every new feature:
 
 1. **Create the test file first:** `src/features/[feature].test.ts`
 2. **Write failing tests** that describe the expected behavior (HTTP status, HTML content).
-3. **Run `bun test src/`** — confirm the tests fail.
+3. **Run `bun test src/`** - confirm the tests fail.
 4. **Implement the feature** in `src/features/[feature].tsx`.
-5. **Run `bun test src/`** — confirm all tests pass.
+5. **Run `bun test src/`** - confirm all tests pass.
 6. **Never tell the user "done" until tests pass.**
 
 ### Test Pattern
@@ -82,10 +82,10 @@ You **must** update `STATE.md`. Keep it as a flat bullet list. Minimal tokens.
 
 ### Where Shared Code Lives
 
-- `src/lib/layout.tsx` — The `<Layout>` component. **Always import from here**, never from `index.tsx`.
-- `src/lib/db.ts` — Database schema, connection, and auto-migrate.
-- `src/lib/` — Add other shared utilities here (e.g., `icons.tsx`, `logger.ts`, `env.ts`).
-- `src/features/` — Feature-specific code only. Each feature imports from `src/lib/` as needed.
+- `src/lib/layout.tsx` - The `<Layout>` component. **Always import from here**, never from `index.tsx`.
+- `src/lib/db.ts` - Database schema, connection, and auto-migrate.
+- `src/lib/` - Add other shared utilities here (for example `icons.tsx`, `logger.ts`, `env.ts`).
+- `src/features/` - Feature-specific code only. Each feature imports from `src/lib/` as needed.
 
 ## How to Add a New Feature
 
@@ -108,7 +108,7 @@ touch src/features/notes.tsx
 
 # 6. Update STATE.md
 
-# 7. Run: bun test src/ — all green? Done.
+# 7. Run: bun test src/ - all green? Done.
 ```
 
 ## Common Patterns
@@ -143,12 +143,12 @@ app.get("/", (c) => {
 </form>
 ```
 
-## Pitfalls — Read Before Coding
+## Pitfalls: Read Before Coding
 
 These are common mistakes. Avoid them.
 
 ### CSRF on Mutating Requests
-Thrust enables CSRF protection globally. In **tests**, all `POST`, `PATCH`, `PUT`, `DELETE` requests need an `Origin` header or they'll get a `403`:
+Thrust enables CSRF protection globally. In **tests**, all `POST`, `PATCH`, `PUT`, `DELETE` requests need an `Origin` header or they will get a `403`:
 ```ts
 // Bad: returns 403
 const res = await app.request("/items", { method: "POST", body: form });
@@ -172,7 +172,7 @@ const created = db.insert(items).values({ name }).returning().get();
 ```
 
 ### HTMX: Use Absolute Paths in `hx-*` Attributes
-Feature routes are mounted on sub-paths (e.g., `/notes`). HTMX attributes must use **full absolute paths**, not relative:
+Feature routes are mounted on sub-paths (for example `/notes`). HTMX attributes must use **full absolute paths**, not relative:
 ```tsx
 // Bad: resolves to current page path, not /notes/5
 hx-delete="/5"
@@ -187,15 +187,15 @@ Hono JSX does **not** support `hx-on::after-request` (double colon namespace syn
 // Bad: JSX parse error ("Expected identifier after hx-on:")
 <form hx-on::after-request="this.reset()" />
 
-// Good — use spread for namespaced attributes
+// Good: use spread for namespaced attributes
 <form {...{ "hx-on:htmx:after-request": "this.reset()" }} />
 ```
 
 ### HTMX: Partial Swaps Lose Surrounding State
-When using `hx-target` to replace only part of a page (e.g., a list), any UI state *outside* that target (dropdown selections, scroll position) is preserved. But if you accidentally swap a **parent** element that contains both the control and the list, the control resets. Keep your `hx-target` as narrow as possible.
+When using `hx-target` to replace only part of a page (for example a list), any UI state *outside* that target (dropdown selections, scroll position) is preserved. But if you accidentally swap a **parent** element that contains both the control and the list, the control resets. Keep your `hx-target` as narrow as possible.
 
 ### Layout: Always Import from `src/lib/layout.tsx`
-Never import `Layout` from `index.tsx` — this causes circular imports when `index.tsx` imports your feature route.
+Never import `Layout` from `index.tsx` - this causes circular imports when `index.tsx` imports your feature route.
 ```tsx
 // Bad: circular import crash ("Cannot access before initialization")
 import { Layout } from "../index";
@@ -205,4 +205,4 @@ import { Layout } from "../lib/layout";
 ```
 
 ### Large Feature Files: Split When Needed
-If a feature file grows beyond ~200 lines, split helper components into `src/lib/` while keeping routes in the feature file. The route handlers stay in `src/features/`, shared UI components move to `src/lib/`.
+If a feature file grows beyond about 200 lines, split helper components into `src/lib/` while keeping routes in the feature file. The route handlers stay in `src/features/`, shared UI components move to `src/lib/`.

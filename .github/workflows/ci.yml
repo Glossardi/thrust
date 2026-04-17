@@ -41,6 +41,9 @@ jobs:
       - name: Sync create-thrust template
         run: bun run create-thrust:sync
 
+      - name: Validate create-thrust variants
+        run: bun run create-thrust:variant-test
+
       - name: Scaffold minimal app
         run: |
           rm -rf /tmp/create-thrust-minimal

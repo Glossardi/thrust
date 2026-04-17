@@ -1,6 +1,6 @@
 # Thrust Roadmap
 
-## Phase 1 — Publicly usable
+## Phase 1 - Publicly usable
 
 Goal: Make Thrust easy to trust, install, run, and contribute to.
 
@@ -16,7 +16,7 @@ Goal: Make Thrust easy to trust, install, run, and contribute to.
 - Every PR runs install, CSS build, tests, and a server smoke test automatically
 - Contributors know what belongs in core vs docs vs examples
 
-## Phase 2 — Large-repo ready
+## Phase 2 - Large-repo ready
 
 Goal: Keep Thrust understandable for coding agents as projects grow.
 
@@ -32,7 +32,7 @@ Goal: Keep Thrust understandable for coding agents as projects grow.
 - Shared code has predictable placement
 - Async / long-running flows are documented and repeatable
 
-## Phase 3 — Ecosystem ready
+## Phase 3 - Ecosystem ready
 
 Goal: Make Thrust feel like a serious framework, not just a starter template.
 

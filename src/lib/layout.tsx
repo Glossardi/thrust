@@ -1,6 +1,6 @@
 import type { FC } from "hono/jsx";
 
-// ── Layout ──────────────────────────────────────────────
+// Layout
 // Shared HTML shell used by all pages. Import in features:
 //   import { Layout } from "../lib/layout";
 const Layout: FC<{ title?: string }> = ({ title, children }) => (

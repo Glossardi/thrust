@@ -1,4 +1,4 @@
-# TESTCASE.md — Thrust Framework Stress Test
+# TESTCASE.md - Thrust Framework Stress Test
 
 > **Purpose:** Fork this repo, give the prompt below to any AI coding agent, and evaluate how well Thrust + AGENT.md guide the agent to produce correct, working code.
 
@@ -10,7 +10,7 @@
 2. `bun install && bun run build:css`
 3. Verify base tests pass: `bun test src/`
 4. Copy the **Agent Prompt** below into your AI coding agent
-5. Let the agent work — **do not help it**
+5. Let the agent work - **do not help it**
 6. Score the result using the **Rubric** at the bottom
 
 ---
@@ -31,12 +31,12 @@ Requirements:
 
 **1. Database**
 Add a `notes` table to `src/lib/db.ts` with these columns:
-- `id` — integer, primary key, auto-increment
-- `title` — text, not null
-- `content` — text, not null, default empty string
-- `category` — text, not null, default "general" (allowed values: "general", "work", "personal")
-- `pinned` — boolean (integer), not null, default false
-- `createdAt` — text, not null, default current timestamp (ISO string)
+- `id` - integer, primary key, auto-increment
+- `title` - text, not null
+- `content` - text, not null, default empty string
+- `category` - text, not null, default "general" (allowed values: "general", "work", "personal")
+- `pinned` - boolean (integer), not null, default false
+- `createdAt` - text, not null, default current timestamp (ISO string)
 
 **2. Routes & UI (all in `src/features/notes.tsx`)**
 
@@ -50,7 +50,7 @@ Add a `notes` table to `src/lib/db.ts` with these columns:
 
 **3. UI Details**
 - Each note card should show: title, content (truncated to 120 chars), category as a DaisyUI badge, pin icon/button, delete button.
-- Pinned notes should have a visual indicator (e.g. `border-primary` or a 📌 icon).
+- Pinned notes should have a visual indicator (e.g. `border-primary` or a pin icon).
 - The category filter dropdown should use `hx-get="/notes/filter"` with `hx-target` to replace the notes list without full page reload.
 - The create form should use HTMX to add the new note without page reload.
 - Show an empty state message when no notes exist: "No notes yet. Create your first one!"
@@ -87,7 +87,7 @@ Score each dimension **0-3**. Total possible: **30 points**.
 | 0 | No tests written, or tests written after implementation |
 | 1 | Tests exist but were clearly written alongside/after code |
 | 2 | Tests created first, but agent didn't run them to verify failure before implementing |
-| 3 | Full TDD cycle: tests written → ran and failed → code written → ran and passed |
+| 3 | Full TDD cycle: tests written -> ran and failed -> code written -> ran and passed |
 
 ### 2. AGENT.md Rule Adherence (0-3)
 | Score | Criteria |
@@ -105,7 +105,7 @@ Score each dimension **0-3**. Total possible: **30 points**.
 | 2 | STATE.md updated with most info |
 | 3 | STATE.md accurately reflects all new routes, table schema, and feature file |
 
-### 4. Tests Pass — `bun test src/` (0-3)
+### 4. Tests Pass - `bun test src/` (0-3)
 | Score | Criteria |
 |-------|----------|
 | 0 | Tests don't run (import errors, syntax errors) |
@@ -175,7 +175,7 @@ The CSRF middleware requires an `Origin` header. If the agent's tests don't incl
 ### Pitfall 2: Drizzle `.returning()` with bun:sqlite
 In Drizzle with bun:sqlite, `db.insert(...).returning()` does NOT return an array you can destructure. You need `.returning().get()` for a single row.
 
-**Watch for:** Agent writing `const [created] = db.insert(...).returning()` → runtime crash.
+**Watch for:** Agent writing `const [created] = db.insert(...).returning()` -> runtime crash.
 
 ### Pitfall 3: Feature Route Mounting
 The feature creates a sub-router (`new Hono()`), but when mounted at `/notes`, all internal routes are relative. The HTMX `hx-*` attributes need **absolute paths** (e.g., `hx-delete="/notes/5"` not `hx-delete="/5"`).
@@ -245,13 +245,13 @@ kill %1
 
 | Score | Rating | Meaning |
 |-------|--------|---------|
-| 27-30 | ⭐⭐⭐ Excellent | Framework guides agents perfectly |
-| 21-26 | ⭐⭐ Good | Framework works, but AGENT.md needs more guidance |
-| 15-20 | ⭐ Fair | Significant gaps in documentation/patterns |
-| 0-14 | ❌ Needs Work | Framework confuses agents more than it helps |
+| 27-30 | Excellent | Framework guides agents perfectly |
+| 21-26 | Good | Framework works, but AGENT.md needs more guidance |
+| 15-20 | Fair | Significant gaps in documentation/patterns |
+| 0-14 | Needs Work | Framework confuses agents more than it helps |
 
 **What a low score tells you:**
-- Score < 15 → AGENT.md needs more explicit examples and pitfall warnings
-- Low "HTMX Correctness" → Need an HTMX pattern cookbook in AGENT.md
-- Low "Self-Correction" → Tests are too hard to debug; improve error messages
-- Low "TDD Compliance" → TDD workflow needs stricter step-by-step instructions
+- Score < 15 -> AGENT.md needs more explicit examples and pitfall warnings
+- Low "HTMX Correctness" -> Need an HTMX pattern cookbook in AGENT.md
+- Low "Self-Correction" -> Tests are too hard to debug; improve error messages
+- Low "TDD Compliance" -> TDD workflow needs stricter step-by-step instructions

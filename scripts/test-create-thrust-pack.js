@@ -41,8 +41,24 @@ run("bun", ["add", "-d", tarballPath], tmpRoot);
 run(path.join(tmpRoot, "node_modules", ".bin", "create-thrust"), [appDir, "--no-install"], tmpRoot);
 
 const generatedPkg = JSON.parse(readFileSync(path.join(appDir, "package.json"), "utf8"));
+const generatedReadme = readFileSync(path.join(appDir, "README.md"), "utf8");
+
 if (generatedPkg.name !== "app") {
   console.error(`Unexpected generated package name: ${generatedPkg.name}`);
+  process.exit(1);
+}
+for (const key of Object.keys(generatedPkg.scripts ?? {})) {
+  if (key.startsWith("create-thrust:")) {
+    console.error(`Generated app still contains internal script: ${key}`);
+    process.exit(1);
+  }
+}
+if (!existsSync(path.join(appDir, ".gitignore"))) {
+  console.error("Generated app is missing .gitignore");
+  process.exit(1);
+}
+if (existsSync(path.join(appDir, "bun.lock"))) {
+  console.error("Generated app should not include bun.lock");
   process.exit(1);
 }
 if (!existsSync(path.join(appDir, "src", "index.tsx"))) {
@@ -51,6 +67,10 @@ if (!existsSync(path.join(appDir, "src", "index.tsx"))) {
 }
 if (!existsSync(path.join(appDir, "README.md"))) {
   console.error("Generated app is missing README.md");
+  process.exit(1);
+}
+if (generatedReadme.includes("## Scaffolder variants")) {
+  console.error("Generated README still includes scaffolder documentation");
   process.exit(1);
 }
 
