@@ -28,8 +28,9 @@ Open [http://localhost:3000](http://localhost:3000). That's it.
 
 ```
 src/
-├── index.tsx              ← App entry, layout, security, mounts features
+├── index.tsx              ← App entry, security, mounts features
 ├── lib/
+│   ├── layout.tsx          ← Shared HTML layout (import in features)
 │   ├── db.ts              ← Schema + bun:sqlite connection (opt-in)
 │   └── auth.ts            ← Better Auth (opt-in)
 └── features/

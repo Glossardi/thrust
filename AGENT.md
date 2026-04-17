@@ -23,7 +23,7 @@ src/features/
 - No React, no Vue, no client-side state management.
 - Use `hx-get`, `hx-post`, `hx-patch`, `hx-delete` to interact with Hono routes.
 - Use `hx-target` and `hx-swap` to update specific DOM elements.
-- For forms, use `hx-on--after-request="this.reset()"` to clear inputs.
+- For forms, use `hx-on:htmx:after-request` (see Pitfalls below for the correct JSX syntax).
 
 ## Rule 3: Test-Driven Development (TDD)
 
@@ -74,10 +74,18 @@ You **must** update `STATE.md`. Keep it as a flat bullet list. Minimal tokens.
 | Layer | File | Purpose |
 |-------|------|---------|
 | Entry | `src/index.tsx` | Mounts security, static files, features |
+| Layout | `src/lib/layout.tsx` | Shared HTML shell (import in features) |
 | DB | `src/lib/db.ts` | Drizzle schema + bun:sqlite connection + auto-migrate |
 | Auth | `src/lib/auth.ts` | Better Auth config |
 | Features | `src/features/*.tsx` | Self-contained feature slices |
 | Tests | `src/features/*.test.ts` | Colocated bun:test files |
+
+### Where Shared Code Lives
+
+- `src/lib/layout.tsx` — The `<Layout>` component. **Always import from here**, never from `index.tsx`.
+- `src/lib/db.ts` — Database schema, connection, and auto-migrate.
+- `src/lib/` — Add other shared utilities here (e.g., `icons.tsx`, `logger.ts`, `env.ts`).
+- `src/features/` — Feature-specific code only. Each feature imports from `src/lib/` as needed.
 
 ## How to Add a New Feature
 
@@ -115,7 +123,7 @@ app.post("/items", async (c) => {
 
 ### Full Page with Layout
 ```tsx
-import { Layout } from "../index";
+import { Layout } from "../lib/layout";
 
 app.get("/", (c) => {
   return c.html(
@@ -127,8 +135,9 @@ app.get("/", (c) => {
 ```
 
 ### Form with HTMX
-```html
-<form hx-post="/items" hx-target="#list" hx-swap="beforeend">
+```tsx
+<form hx-post="/items" hx-target="#list" hx-swap="beforeend"
+      {...{ "hx-on:htmx:after-request": "this.reset()" }}>
   <input name="text" required />
   <button type="submit">Add</button>
 </form>
@@ -172,5 +181,28 @@ hx-delete="/5"
 hx-delete={`/notes/${id}`}
 ```
 
+### HTMX: `hx-on` Event Attributes in JSX
+Hono JSX does **not** support `hx-on::after-request` (double colon namespace syntax). Use the `hx-on:` prefix with a spread:
+```tsx
+// ❌ JSX parse error: "Expected identifier after hx-on:"
+<form hx-on::after-request="this.reset()" />
+
+// ✅ Correct — use spread for namespaced attributes
+<form {...{ "hx-on:htmx:after-request": "this.reset()" }} />
+```
+
 ### HTMX: Partial Swaps Lose Surrounding State
 When using `hx-target` to replace only part of a page (e.g., a list), any UI state *outside* that target (dropdown selections, scroll position) is preserved. But if you accidentally swap a **parent** element that contains both the control and the list, the control resets. Keep your `hx-target` as narrow as possible.
+
+### Layout: Always Import from `src/lib/layout.tsx`
+Never import `Layout` from `index.tsx` — this causes circular imports when `index.tsx` imports your feature route.
+```tsx
+// ❌ Circular import crash: "Cannot access before initialization"
+import { Layout } from "../index";
+
+// ✅ Correct
+import { Layout } from "../lib/layout";
+```
+
+### Large Feature Files: Split When Needed
+If a feature file grows beyond ~200 lines, split helper components into `src/lib/` while keeping routes in the feature file. The route handlers stay in `src/features/`, shared UI components move to `src/lib/`.
