@@ -66,6 +66,7 @@ bun run create-thrust:sync
 Please make sure:
 - tests pass
 - CSS builds successfully
+- scaffolder checks pass (`bun run create-thrust:variant-test` and `bun run create-thrust:pack-test` when relevant)
 - docs are updated when behavior changes
 - `STATE.md` is updated if routes, tables, or starter structure changed
 
@@ -75,6 +76,7 @@ Please make sure:
 - Explain why the change is generally useful
 - Prefer the smallest change that solves the problem
 - Include user-facing impact in the PR description
+- Use plain-text, professional commit subjects without decorative emoji
 
 ## Framework quality bar
 

@@ -65,12 +65,15 @@ function updateReadme(appDir, opts) {
 
   if (!opts.db) {
     readme = readme.replace("| `bun run db:reset` | Delete and recreate the database |\n", "");
-    readme = readme.replace("│   ├── db.ts              ← Schema + bun:sqlite connection (opt-in)\n", "");
-    readme = readme.replace("│   └── auth.ts            ← Better Auth (opt-in)\n", "");
+    readme = readme.replace("|  |- db.ts               # Schema + bun:sqlite connection (opt-in)\n", "");
+    readme = readme.replace("|  `- auth.ts             # Better Auth (opt-in)\n", "");
+    readme = readme.replace("2. Delete `src/lib/db.ts` and `src/lib/auth.ts` if you do not need database or auth\n", "2. Add `src/lib/db.ts` and `src/lib/auth.ts` later if your app needs a database or authentication\n");
     readme = readme.replace("### Want a full SaaS?\nKeep everything. Add features in `src/features/`, tables in `src/lib/db.ts`. Auth is ready via Better Auth.\n", "### Need a database or auth?\nAdd `src/lib/db.ts` for SQLite + Drizzle, and `src/lib/auth.ts` if you need authentication.\n");
+    readme = readme.replace("| Database | **bun:sqlite + Drizzle ORM** | Embedded, zero setup, type-safe |\n", "");
+    readme = readme.replace("| Auth | **Better Auth** | Simple, framework-agnostic |\n", "");
     readme = readme.replace(/## Database[\s\S]*?## Philosophy\n/, "## Philosophy\n");
   } else if (!opts.auth) {
-    readme = readme.replace("│   └── auth.ts            ← Better Auth (opt-in)\n", "");
+    readme = readme.replace("|  `- auth.ts             # Better Auth (opt-in)\n", "");
     readme = readme.replace("### Want a full SaaS?\nKeep everything. Add features in `src/features/`, tables in `src/lib/db.ts`. Auth is ready via Better Auth.\n", "### Need auth later?\nAdd `src/lib/auth.ts` when your project needs authentication.\n");
     readme = readme.replace("| Auth | **Better Auth** | Simple, framework-agnostic |\n", "");
   }
@@ -83,11 +86,11 @@ function updateState(appDir, opts) {
   let state = readFileSync(statePath, "utf8");
 
   if (!opts.db) {
-    state = state.replace("- *(none yet — add tables in `src/lib/db.ts`)*", "- *(none yet — add `src/lib/db.ts` if your app needs a database)*");
-    state = state.replace("- `src/lib/db.ts` — Database connection + schema (opt-in)\n", "");
-    state = state.replace("- `src/lib/auth.ts` — Better Auth config (opt-in)\n", "");
+    state = state.replace("- *(none yet - add tables in `src/lib/db.ts`)*", "- *(none yet - add `src/lib/db.ts` if your app needs a database)*");
+    state = state.replace("- `src/lib/db.ts` - Database connection + schema (opt-in)\n", "");
+    state = state.replace("- `src/lib/auth.ts` - Better Auth config (opt-in)\n", "");
   } else if (!opts.auth) {
-    state = state.replace("- `src/lib/auth.ts` — Better Auth config (opt-in)\n", "");
+    state = state.replace("- `src/lib/auth.ts` - Better Auth config (opt-in)\n", "");
   }
 
   writeFileSync(statePath, state);

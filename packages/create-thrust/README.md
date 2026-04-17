@@ -2,6 +2,8 @@
 
 Scaffold a new Thrust app.
 
+Generated apps are Bun-first and expect Bun for install, dev, build, and test commands.
+
 ## Usage
 
 Published usage:

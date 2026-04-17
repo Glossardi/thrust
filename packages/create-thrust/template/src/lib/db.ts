@@ -3,7 +3,7 @@ import { mkdirSync } from "node:fs";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-// ── Schema ──────────────────────────────────────────────
+// Schema
 // Define your tables here. Example:
 //
 // export const posts = sqliteTable("posts", {
@@ -13,14 +13,14 @@ import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 //   createdAt: text("createdAt").notNull().$defaultFn(() => new Date().toISOString()),
 // });
 
-// ── Connection ──────────────────────────────────────────
+// Connection
 mkdirSync("data", { recursive: true });
 const sqlite = new Database("data/app.db", { create: true });
 sqlite.exec("PRAGMA journal_mode = WAL;");
 
 export const db = drizzle(sqlite);
 
-// ── Auto-migrate ────────────────────────────────────────
+// Auto-migrate
 // Add CREATE TABLE IF NOT EXISTS for each table above.
 // These are idempotent and run on every app start.
 // Example:

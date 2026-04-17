@@ -9,9 +9,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    defaults:
-      run:
-        working-directory: packages/create-thrust
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,25 +26,24 @@ jobs:
 
       - name: Install dependencies
         run: bun install
-        working-directory: .
 
       - name: Sync template
         run: bun run create-thrust:sync
-        working-directory: .
 
       - name: Run tests
         run: bun run test
-        working-directory: .
 
       - name: Build CSS
         run: bun run build:css
-        working-directory: .
+
+      - name: Validate create-thrust variants
+        run: bun run create-thrust:variant-test
 
       - name: Pack test create-thrust
         run: bun run create-thrust:pack-test
-        working-directory: .
 
       - name: Publish to npm
         run: npm publish --access public
+        working-directory: packages/create-thrust
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

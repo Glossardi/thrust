@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 
-// ── Better Auth Configuration ───────────────────────────
+// Better Auth configuration
 // Remove this file if you don't need authentication.
 // Then remove the auth route in src/index.tsx.
 export const auth = betterAuth({

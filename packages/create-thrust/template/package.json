@@ -1,16 +1,17 @@
 {
   "name": "thrust-app",
   "version": "0.1.0",
-  "description": "Thrust — hyper-optimized full-stack micro-framework for AI coding agents",
+  "description": "Thrust - hyper-optimized full-stack micro-framework for AI coding agents",
   "type": "module",
   "scripts": {
     "dev": "bun run --watch src/index.tsx",
     "test": "bun test src/",
     "test:watch": "bun test --watch src/",
     "build:css": "bunx @tailwindcss/cli -i tailwind.css -o public/style.css",
-    "db:reset": "rm -rf data/app.db data/app.db-wal data/app.db-shm && echo '✓ Database reset'",
+    "db:reset": "rm -rf data/app.db data/app.db-wal data/app.db-shm && echo 'Database reset'",
     "create-thrust:sync": "node scripts/sync-create-thrust-template.js",
     "create-thrust:test": "rm -rf /tmp/create-thrust-test && node packages/create-thrust/bin/create-thrust.js /tmp/create-thrust-test --no-install",
+    "create-thrust:variant-test": "node scripts/test-create-thrust-variants.js",
     "create-thrust:pack-test": "node scripts/test-create-thrust-pack.js"
   },
   "dependencies": {
