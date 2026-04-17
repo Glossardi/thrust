@@ -1,0 +1,22 @@
+{
+  "name": "create-thrust",
+  "version": "0.1.0",
+  "description": "Scaffold a new Thrust app",
+  "type": "module",
+  "bin": {
+    "create-thrust": "bin/create-thrust.js"
+  },
+  "files": [
+    "bin",
+    "template",
+    "README.md"
+  ],
+  "keywords": [
+    "thrust",
+    "bun",
+    "hono",
+    "htmx",
+    "scaffold"
+  ],
+  "license": "MIT"
+}
