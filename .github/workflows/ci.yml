@@ -53,3 +53,6 @@ jobs:
           mkdir -p public
           bun run build:css
           bun run test
+
+      - name: Pack test create-thrust
+        run: bun run create-thrust:pack-test
