@@ -150,10 +150,10 @@ These are common mistakes. Avoid them.
 ### CSRF on Mutating Requests
 Thrust enables CSRF protection globally. In **tests**, all `POST`, `PATCH`, `PUT`, `DELETE` requests need an `Origin` header or they'll get a `403`:
 ```ts
-// ❌ Will return 403
+// Bad: returns 403
 const res = await app.request("/items", { method: "POST", body: form });
 
-// ✅ Correct
+// Good
 const res = await app.request("/items", {
   method: "POST",
   headers: { Origin: "http://localhost" },
@@ -164,30 +164,30 @@ const res = await app.request("/items", {
 ### Drizzle + bun:sqlite: Use `.get()` After `.returning()`
 With bun:sqlite, `.returning()` alone is **not** iterable. Always chain `.get()` for a single row:
 ```ts
-// ❌ Runtime crash: "is not iterable"
+// Bad: runtime crash ("is not iterable")
 const [created] = db.insert(items).values({ name }).returning();
 
-// ✅ Correct
+// Good
 const created = db.insert(items).values({ name }).returning().get();
 ```
 
 ### HTMX: Use Absolute Paths in `hx-*` Attributes
 Feature routes are mounted on sub-paths (e.g., `/notes`). HTMX attributes must use **full absolute paths**, not relative:
 ```tsx
-// ❌ Resolves to current page path, not /notes/5
+// Bad: resolves to current page path, not /notes/5
 hx-delete="/5"
 
-// ✅ Correct
+// Good
 hx-delete={`/notes/${id}`}
 ```
 
 ### HTMX: `hx-on` Event Attributes in JSX
 Hono JSX does **not** support `hx-on::after-request` (double colon namespace syntax). Use the `hx-on:` prefix with a spread:
 ```tsx
-// ❌ JSX parse error: "Expected identifier after hx-on:"
+// Bad: JSX parse error ("Expected identifier after hx-on:")
 <form hx-on::after-request="this.reset()" />
 
-// ✅ Correct — use spread for namespaced attributes
+// Good — use spread for namespaced attributes
 <form {...{ "hx-on:htmx:after-request": "this.reset()" }} />
 ```
 
@@ -197,10 +197,10 @@ When using `hx-target` to replace only part of a page (e.g., a list), any UI sta
 ### Layout: Always Import from `src/lib/layout.tsx`
 Never import `Layout` from `index.tsx` — this causes circular imports when `index.tsx` imports your feature route.
 ```tsx
-// ❌ Circular import crash: "Cannot access before initialization"
+// Bad: circular import crash ("Cannot access before initialization")
 import { Layout } from "../index";
 
-// ✅ Correct
+// Good
 import { Layout } from "../lib/layout";
 ```
 

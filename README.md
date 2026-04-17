@@ -1,4 +1,4 @@
-# 🚀 Thrust
+# Thrust
 
 **Maximum Velocity, Minimal Drag.**
 
@@ -44,8 +44,9 @@ Every feature is a **single file** in `src/features/`. Route handlers, JSX compo
 ## Modularity — Use What You Need
 
 ### Want a minimal static site?
-1. Delete `src/lib/`
-2. You now have a pure Hono SSR server. Add your own routes in `src/index.tsx`.
+1. Keep `src/lib/layout.tsx`
+2. Delete `src/lib/db.ts` and `src/lib/auth.ts` if you do not need database or auth
+3. You now have a pure Hono SSR server. Add your own routes in `src/index.tsx`.
 
 ### Want a full SaaS?
 Keep everything. Add features in `src/features/`, tables in `src/lib/db.ts`. Auth is ready via Better Auth.

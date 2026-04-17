@@ -20,7 +20,7 @@ app.use("*", secureHeaders());
 
 // ── Error Handler (dev-friendly) ────────────────────────
 app.onError((err, c) => {
-  console.error(`❌ ${c.req.method} ${c.req.path}:`, err.message);
+  console.error(`Error ${c.req.method} ${c.req.path}:`, err.message);
   return c.text(`Error: ${err.message}`, 500);
 });
 
@@ -66,7 +66,7 @@ export { app };
 
 // ── Start Server ────────────────────────────────────────
 const port = Number(process.env.PORT) || 3000;
-console.log(`🚀 Thrust running → http://localhost:${port}`);
+console.log(`Thrust running at http://localhost:${port}`);
 
 export default {
   port,
