@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import { csrf } from "hono/csrf";
 import { secureHeaders } from "hono/secure-headers";
-import type { FC } from "hono/jsx";
+import { Layout } from "./lib/layout";
 
 // ── Features ────────────────────────────────────────────
 // Import and mount your feature routes here:
@@ -31,22 +31,6 @@ app.use(
     root: "./public/",
     rewriteRequestPath: (path) => path.replace(/^\/static/, ""),
   })
-);
-
-// ── Layout ──────────────────────────────────────────────
-const Layout: FC<{ title?: string }> = ({ title, children }) => (
-  <html lang="en" data-theme="thrust">
-    <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>{title ?? "Thrust App"}</title>
-      <link rel="stylesheet" href="/static/style.css" />
-      <script src="https://unpkg.com/htmx.org@2.0.4" />
-    </head>
-    <body class="min-h-screen bg-base-100">
-      <div class="container mx-auto max-w-2xl p-4">{children}</div>
-    </body>
-  </html>
 );
 
 // ── Home ────────────────────────────────────────────────
@@ -78,7 +62,7 @@ app.get("/", (c) =>
 // app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
 
 // ── Export for testing ──────────────────────────────────
-export { app, Layout };
+export { app };
 
 // ── Start Server ────────────────────────────────────────
 const port = Number(process.env.PORT) || 3000;

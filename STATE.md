@@ -9,8 +9,10 @@
 ## Features
 - *(none yet — add features in `src/features/`)*
 
-## Auth
-- Better Auth configured but **not mounted** (commented out in index.tsx)
+## Shared Modules
+- `src/lib/layout.tsx` — HTML layout shell with Thrust theme
+- `src/lib/db.ts` — Database connection + schema (opt-in)
+- `src/lib/auth.ts` — Better Auth config (opt-in)
 
 ## Styles
 - Tailwind v4 + DaisyUI with custom "thrust" theme
