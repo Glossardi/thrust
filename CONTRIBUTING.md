@@ -52,6 +52,15 @@ bun run test
 bun dev
 ```
 
+## If you change the starter template
+
+The scaffolder package contains a snapshot of the root starter in `packages/create-thrust/template/`.
+After changing starter files, run:
+
+```bash
+bun run create-thrust:sync
+```
+
 ## Before opening a PR
 
 Please make sure:

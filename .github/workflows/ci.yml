@@ -37,3 +37,19 @@ jobs:
           curl -f http://localhost:3000/static/style.css
           kill $SERVER_PID
           wait $SERVER_PID || true
+
+      - name: Sync create-thrust template
+        run: bun run create-thrust:sync
+
+      - name: Scaffold minimal app
+        run: |
+          rm -rf /tmp/create-thrust-minimal
+          node packages/create-thrust/bin/create-thrust.js /tmp/create-thrust-minimal --no-install
+
+      - name: Validate scaffolded app
+        run: |
+          cd /tmp/create-thrust-minimal
+          bun install
+          mkdir -p public
+          bun run build:css
+          bun run test
