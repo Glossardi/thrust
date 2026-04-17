@@ -4,8 +4,16 @@ Scaffold a new Thrust app.
 
 ## Usage
 
+Published usage:
+
 ```bash
 bunx create-thrust my-app
+```
+
+Local development usage from this repository:
+
+```bash
+node packages/create-thrust/bin/create-thrust.js my-app
 ```
 
 Options:

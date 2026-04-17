@@ -37,8 +37,9 @@ function updatePackageJson(appDir, opts) {
   const packagePath = path.join(appDir, "package.json");
   const pkg = JSON.parse(readFileSync(packagePath, "utf8"));
   pkg.name = sanitizePackageName(path.basename(appDir));
-  delete pkg.scripts["create-thrust:sync"];
-  delete pkg.scripts["create-thrust:test"];
+  for (const key of Object.keys(pkg.scripts)) {
+    if (key.startsWith("create-thrust:")) delete pkg.scripts[key];
+  }
 
   if (!opts.db) {
     delete pkg.dependencies["drizzle-orm"];

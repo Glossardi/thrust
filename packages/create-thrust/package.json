@@ -9,7 +9,10 @@
   "files": [
     "bin",
     "template",
-    "README.md"
+    "template/.gitignore",
+    "README.md",
+    "PUBLISHING.md",
+    "LICENSE"
   ],
   "keywords": [
     "thrust",
@@ -18,5 +21,20 @@
     "htmx",
     "scaffold"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Glossardi/thrust.git",
+    "directory": "packages/create-thrust"
+  },
+  "homepage": "https://github.com/Glossardi/thrust/tree/main/packages/create-thrust",
+  "bugs": {
+    "url": "https://github.com/Glossardi/thrust/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "license": "MIT"
 }

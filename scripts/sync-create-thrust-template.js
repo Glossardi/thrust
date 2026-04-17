@@ -12,7 +12,6 @@ const include = [
   "AGENT.md",
   "README.md",
   "STATE.md",
-  "bun.lock",
   "bunfig.toml",
   "package.json",
   "src",
