@@ -58,7 +58,7 @@ function updateReadme(appDir, opts) {
 
   readme = readme.replace(
     /## Quickstart[\s\S]*?## Commands\n/,
-    "## Quickstart\n\n```bash\nbun install\nbun run build:css\nbun dev\n```\n\nOpen [http://localhost:3000](http://localhost:3000). That's it.\n\n## Commands\n"
+    "## Quickstart\n\n```bash\nbun install\nbun run build:client\nbun run build:css\nbun dev\n```\n\nOpen [http://localhost:3000](http://localhost:3000). That's it.\n\n## Commands\n"
   );
 
   readme = readme.replace(/## Scaffolder variants[\s\S]*?## Architecture\n/, "## Architecture\n");
@@ -67,7 +67,6 @@ function updateReadme(appDir, opts) {
     readme = readme.replace("| `bun run db:reset` | Delete and recreate the database |\n", "");
     readme = readme.replace("|  |- db.ts               # Schema + bun:sqlite connection (opt-in)\n", "");
     readme = readme.replace("|  `- auth.ts             # Better Auth (opt-in)\n", "");
-    readme = readme.replace("2. Delete `src/lib/db.ts` and `src/lib/auth.ts` if you do not need database or auth\n", "2. Add `src/lib/db.ts` and `src/lib/auth.ts` later if your app needs a database or authentication\n");
     readme = readme.replace("### Want a full SaaS?\nKeep everything. Add features in `src/features/`, tables in `src/lib/db.ts`. Auth is ready via Better Auth.\n", "### Need a database or auth?\nAdd `src/lib/db.ts` for SQLite + Drizzle, and `src/lib/auth.ts` if you need authentication.\n");
     readme = readme.replace("| Database | **bun:sqlite + Drizzle ORM** | Embedded, zero setup, type-safe |\n", "");
     readme = readme.replace("| Auth | **Better Auth** | Simple, framework-agnostic |\n", "");
@@ -169,6 +168,7 @@ function main() {
   console.log("\nNext steps:");
   console.log(`  cd ${targetArg}`);
   if (!opts.install) console.log("  bun install");
+  console.log("  bun run build:client");
   console.log("  bun run build:css");
   console.log("  bun dev");
 }

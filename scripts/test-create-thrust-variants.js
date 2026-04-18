@@ -43,8 +43,12 @@ function checkCommon(dir, expectedName) {
   assert(pkg.name === expectedName, `Unexpected package name for ${expectedName}: ${pkg.name}`);
   assert(existsSync(path.join(dir, ".gitignore")), `Missing .gitignore in ${expectedName}`);
   assert(!existsSync(path.join(dir, "bun.lock")), `Generated app should not include bun.lock: ${expectedName}`);
+  assert(existsSync(path.join(dir, "scripts", "build-client.ts")), `Generated app is missing scripts/build-client.ts: ${expectedName}`);
+  assert(existsSync(path.join(dir, "scripts", "dev.ts")), `Generated app is missing scripts/dev.ts: ${expectedName}`);
   assert(!readme.includes("## Scaffolder variants"), `Generated README still includes scaffolder section: ${expectedName}`);
-  assert(readme.includes("bun install\nbun run build:css\nbun dev"), `Generated README quickstart was not rewritten: ${expectedName}`);
+  assert(readme.includes("bun install\nbun run build:client\nbun run build:css\nbun dev"), `Generated README quickstart was not rewritten: ${expectedName}`);
+  assert("build:client" in (pkg.scripts ?? {}), `Generated app is missing build:client: ${expectedName}`);
+  assert("build:client:watch" in (pkg.scripts ?? {}), `Generated app is missing build:client:watch: ${expectedName}`);
   checkNoInternalScripts(pkg);
 
   return { pkg, readme };
@@ -65,7 +69,7 @@ assert(!("db:reset" in (minimal.pkg.scripts ?? {})), "Minimal variant should not
 assert(!minimal.readme.includes("## Database"), "Minimal variant README should not include Database section");
 assert(!minimal.readme.includes("| Database | **bun:sqlite + Drizzle ORM** | Embedded, zero setup, type-safe |"), "Minimal variant README should not include Database tech stack row");
 assert(!minimal.readme.includes("| Auth | **Better Auth** | Simple, framework-agnostic |"), "Minimal variant README should not include Auth tech stack row");
-assert(minimal.readme.includes("Add `src/lib/db.ts` and `src/lib/auth.ts` later if your app needs a database or authentication"), "Minimal variant README should explain how to add db/auth later");
+assert(minimal.readme.includes("Add `src/lib/db.ts` and `src/lib/auth.ts` later if your app needs persistence or authentication"), "Minimal variant README should explain how to add db/auth later");
 
 const db = checkCommon(dbDir, "db-app");
 assert(existsSync(path.join(dbDir, "src", "lib", "db.ts")), "DB variant should include src/lib/db.ts");

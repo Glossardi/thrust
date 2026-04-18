@@ -9,6 +9,7 @@ Goal: Make Thrust easy to trust, install, run, and contribute to.
 - GitHub Actions CI
 - Contribution docs
 - Issue / PR templates
+- typed RPC + islands architecture
 - One minimal reference app
 
 ### Exit criteria
@@ -48,8 +49,8 @@ Goal: Make Thrust feel like a serious framework, not just a starter template.
 - New users can evaluate whether it fits their use case quickly
 
 ## Near-term priorities
-1. CI
-2. Contribution docs
-3. Issue and PR templates
+1. typed RPC + islands pivot
+2. CI alignment for client bundles
+3. Contribution docs
 4. `create-thrust`
 5. Minimal reference app

@@ -12,12 +12,12 @@ describe("GET /", () => {
     expect(html).toContain("src/features/");
   });
 
-  test("includes layout with HTMX and stylesheet", async () => {
+  test("includes layout shell and stylesheet", async () => {
     const res = await app.request("/");
     const html = await res.text();
     expect(html).toContain("<html");
-    expect(html).toContain("htmx.org");
     expect(html).toContain("style.css");
     expect(html).toContain('data-theme="thrust"');
+    expect(html).toContain("typed RPC routes");
   });
 });

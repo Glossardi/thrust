@@ -18,7 +18,8 @@
     "thrust",
     "bun",
     "hono",
-    "htmx",
+    "rpc",
+    "islands",
     "scaffold"
   ],
   "repository": {

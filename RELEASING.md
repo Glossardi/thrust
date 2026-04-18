@@ -11,6 +11,7 @@
 2. Run locally:
    ```bash
    bun run create-thrust:sync
+   bun run build:client
    bun run test
    bun run build:css
    bun run create-thrust:variant-test
@@ -24,6 +25,7 @@
    bunx create-thrust@latest thrust-smoke --no-install
    cd thrust-smoke
    bun install
+   bun run build:client
    bun run build:css
    bun run test
    ```

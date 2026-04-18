@@ -48,6 +48,9 @@ app.get("/", (c) =>
               Add your first feature in{" "}
               <code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">src/features/</code>
             </p>
+            <p class="mt-3 text-sm text-base-content/40">
+              Use server-rendered pages, typed RPC routes, and small client islands.
+            </p>
           </div>
         </div>
       </div>

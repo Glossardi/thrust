@@ -16,6 +16,8 @@ const include = [
   "STATE.md",
   "bunfig.toml",
   "package.json",
+  "scripts/build-client.ts",
+  "scripts/dev.ts",
   "src",
   "tailwind.css",
   "tsconfig.json",

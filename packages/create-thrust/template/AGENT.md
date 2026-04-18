@@ -4,205 +4,317 @@ You are an AI coding agent working on a **Thrust** application. Follow these rul
 
 ## Rule 1: Locality of Behavior
 
-- Every feature lives in **one file** inside `src/features/`.
-- A feature file contains: Hono route handlers, JSX UI components, Zod validation (if needed), and DB queries.
-- **Never** scatter a feature across multiple directories.
-- Name files as `[feature].tsx` with a colocated `[feature].test.ts`.
+- Every feature lives in one feature slice under `src/features/`.
+- The default slice is three colocated files with the same basename:
+  - `[feature].tsx`
+  - `[feature].client.tsx`
+  - `[feature].test.ts`
+- `[feature].tsx` owns server-rendered pages, RPC routes, validation, and server-side feature logic.
+- `[feature].client.tsx` owns browser-only interactive UI.
+- `[feature].test.ts` owns feature tests.
+- Do not scatter one feature across multiple unrelated directories.
 
 ```text
 src/features/
-|- posts.tsx        # route + UI + logic
-|- posts.test.ts    # tests for posts
-|- users.tsx        # route + UI + logic
-`- users.test.ts    # tests for users
+|- posts.tsx           # SSR route + RPC routes + schemas
+|- posts.client.tsx    # browser-only island
+|- posts.test.ts       # tests
+|- users.tsx           # SSR route + RPC routes + schemas
+|- users.client.tsx    # browser-only island
+`- users.test.ts       # tests
 ```
 
-## Rule 2: No Client-Side State
+## Rule 2: Islands Architecture and End-to-End Type Safety
 
-- Use **HTMX** for all interactivity. Return **HTML fragments**, never JSON.
-- No React, no Vue, no client-side state management.
-- Use `hx-get`, `hx-post`, `hx-patch`, `hx-delete` to interact with Hono routes.
-- Use `hx-target` and `hx-swap` to update specific DOM elements.
-- For forms, use `hx-on:htmx:after-request` (see Pitfalls below for the correct JSX syntax).
+- Render full pages on the server with Hono JSX.
+- Use small client islands only for interactive UI.
+- Islands call backend routes through `hc()` from `hono/client`.
+- RPC routes must return typed JSON with explicit status codes.
+- Validate request inputs with `zod` and `@hono/zod-validator`.
+- Keep UI state local to the island with `useState()` and related hooks.
+- Do not use HTML fragment swapping as the primary interaction contract.
+- Do not introduce external client state libraries.
 
 ## Rule 3: Test-Driven Development (TDD)
 
-This is **mandatory**. Follow this exact workflow for every new feature:
+This is mandatory. Follow this workflow for every new feature:
 
-1. **Create the test file first:** `src/features/[feature].test.ts`
-2. **Write failing tests** that describe the expected behavior (HTTP status, HTML content).
-3. **Run `bun test src/`** - confirm the tests fail.
-4. **Implement the feature** in `src/features/[feature].tsx`.
-5. **Run `bun test src/`** - confirm all tests pass.
-6. **Never tell the user "done" until tests pass.**
+1. Create the test file first: `src/features/[feature].test.ts`
+2. Write failing tests for page routes and RPC routes.
+3. Run `bun test src/` and confirm the tests fail.
+4. Implement the server feature and client island.
+5. Run `bun run build:client`.
+6. Run `bun test src/` and confirm all tests pass.
+7. Never tell the user "done" until tests pass.
 
 ### Test Pattern
 
 ```ts
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { app } from "../index";
 
-describe("GET /[feature]", () => {
-  test("returns 200 with expected content", async () => {
-    const res = await app.request("/[feature]");
+describe("GET /notes", () => {
+  test("returns 200 with the notes page", async () => {
+    const res = await app.request("/notes");
     expect(res.status).toBe(200);
     const html = await res.text();
-    expect(html).toContain("Expected Content");
+    expect(html).toContain("Notes");
+  });
+});
+
+describe("POST /notes/api", () => {
+  test("creates a note", async () => {
+    const res = await app.request("/notes/api", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "http://localhost",
+      },
+      body: JSON.stringify({ title: "First note" }),
+    });
+
+    expect(res.status).toBe(201);
   });
 });
 ```
 
 ## Rule 4: Maintain STATE.md
 
-After **every** change that adds/removes/modifies:
-- A route
-- A DB table or column
-- A feature file
+After every change that adds, removes, or modifies:
+- a route
+- a DB table or column
+- a feature file
+- a shared framework primitive
 
-You **must** update `STATE.md`. Keep it as a flat bullet list. Minimal tokens.
+You must update `STATE.md`. Keep it flat and concise.
 
 ## Rule 5: Keep It Minimal
 
-- Use **Tailwind utility classes**. No custom CSS files.
-- Use **DaisyUI component classes** (`btn`, `input`, `card`, etc.) for rapid UI.
-- Prefer Hono's built-in helpers over external middleware.
-- Write the **least code** that fulfills the requirement.
+- Use Tailwind utility classes. No custom CSS files.
+- Use DaisyUI component classes for fast, readable UI.
+- Prefer Hono built-ins over extra abstractions.
+- Write the least code that fulfills the requirement.
 - One import per line. No barrel exports.
+- Keep islands small. Most UI should stay server-rendered.
 
 ## Architecture Reference
 
 | Layer | File | Purpose |
 |-------|------|---------|
-| Entry | `src/index.tsx` | Mounts security, static files, features |
-| Layout | `src/lib/layout.tsx` | Shared HTML shell (import in features) |
+| Entry | `src/index.tsx` | Mounts security, static files, and features |
+| Layout | `src/lib/layout.tsx` | Shared HTML shell |
+| Islands | `src/lib/island.tsx` | Standard island mount helper |
 | DB | `src/lib/db.ts` | Drizzle schema + bun:sqlite connection + auto-migrate |
 | Auth | `src/lib/auth.ts` | Better Auth config |
-| Features | `src/features/*.tsx` | Self-contained feature slices |
+| Features | `src/features/*.tsx` | SSR routes + RPC routes + schemas |
+| Islands | `src/features/*.client.tsx` | Browser-only UI |
 | Tests | `src/features/*.test.ts` | Colocated bun:test files |
 
 ### Where Shared Code Lives
 
-- `src/lib/layout.tsx` - The `<Layout>` component. **Always import from here**, never from `index.tsx`.
-- `src/lib/db.ts` - Database schema, connection, and auto-migrate.
-- `src/lib/` - Add other shared utilities here (for example `icons.tsx`, `logger.ts`, `env.ts`).
-- `src/features/` - Feature-specific code only. Each feature imports from `src/lib/` as needed.
+- `src/lib/layout.tsx` - shared HTML shell
+- `src/lib/island.tsx` - standard way to mount an island from a server-rendered page
+- `src/lib/db.ts` - schema, connection, and auto-migrate
+- `src/lib/auth.ts` - auth setup
+- `src/lib/` - other genuinely shared helpers such as `env.ts`, `icons.tsx`, or `logger.ts`
+- `src/features/` - feature-specific code only
 
-## How to Add a New Feature
+## Feature Blueprint: Todo Example
 
-```bash
-# 1. Create test (TDD)
-touch src/features/notes.test.ts
+Use this pattern when adding a new interactive feature.
 
-# 2. Write failing tests
+### 1. Define schemas
+In `src/features/todos.tsx`, define request schemas first.
 
-# 3. Create feature
-touch src/features/notes.tsx
+```ts
+import { z } from "zod";
 
-# 4. Add DB table to src/lib/db.ts:
-#    - Drizzle schema definition (export const ...)
-#    - CREATE TABLE IF NOT EXISTS in auto-migrate section
-
-# 5. Mount route in src/index.tsx:
-#    import { notesRoute } from "./features/notes";
-#    app.route("/notes", notesRoute);
-
-# 6. Update STATE.md
-
-# 7. Run: bun test src/ - all green? Done.
-```
-
-## Common Patterns
-
-### Return HTML Fragment (for HTMX)
-```tsx
-app.post("/items", async (c) => {
-  // ... create item ...
-  return c.html(<ItemComponent {...item} />);
+const createTodoSchema = z.object({
+  title: z.string().min(1).max(100),
 });
 ```
 
-### Full Page with Layout
+### 2. Write RPC routes with validation
+Use `zValidator()` and explicit JSON status codes.
+
+```ts
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+
+const todosApi = new Hono()
+  .get("/", (c) => {
+    return c.json({ todos: [] }, 200);
+  })
+  .post("/", zValidator("json", createTodoSchema), async (c) => {
+    const data = c.req.valid("json");
+    return c.json({ todo: { id: 1, title: data.title } }, 201);
+  });
+
+export type TodosApiType = typeof todosApi;
+```
+
+### 3. Write the SSR page route
+Render layout on the server and mount the island.
+
 ```tsx
 import { Layout } from "../lib/layout";
+import { Island } from "../lib/island";
 
-app.get("/", (c) => {
+const todosPage = new Hono().get("/", (c) => {
   return c.html(
-    <Layout title="Page">
-      <h1>Content</h1>
+    <Layout title="Todos">
+      <h1 class="text-3xl font-semibold">Todos</h1>
+      <Island entry="todos.client" props={{ initialTodos: [] }} />
     </Layout>
   );
 });
 ```
 
-### Form with HTMX
+### 4. Export one feature router
+Mount page and API routes under the same feature root.
+
+```ts
+const todosRoute = new Hono()
+  .route("/", todosPage)
+  .route("/api", todosApi);
+
+export { todosRoute };
+```
+
+### 5. Write the island
+In `src/features/todos.client.tsx`, keep browser logic local and typed.
+
 ```tsx
-<form hx-post="/items" hx-target="#list" hx-swap="beforeend"
-      {...{ "hx-on:htmx:after-request": "this.reset()" }}>
-  <input name="text" required />
-  <button type="submit">Add</button>
-</form>
+/** @jsxImportSource hono/jsx/dom */
+import { hc } from "hono/client";
+import { render } from "hono/jsx/dom";
+import { useState } from "hono/jsx";
+import type { TodosApiType } from "./todos";
+
+const client = hc<TodosApiType>("/todos/api");
+
+function TodosIsland(props: { initialTodos: Array<{ id: number; title: string }> }) {
+  const [todos, setTodos] = useState(props.initialTodos);
+  const [title, setTitle] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function createTodo() {
+    setSaving(true);
+    const res = await client.index.$post({
+      json: { title },
+    });
+
+    if (res.status === 201) {
+      const data = await res.json();
+      setTodos([...todos, data.todo]);
+      setTitle("");
+    }
+
+    setSaving(false);
+  }
+
+  return (
+    <div class="space-y-4">
+      <input
+        class="input input-bordered w-full"
+        value={title}
+        onInput={(event) => setTitle(event.currentTarget.value)}
+      />
+      <button class="btn btn-primary" disabled={saving} onClick={createTodo}>
+        {saving ? "Saving..." : "Add todo"}
+      </button>
+      <ul class="space-y-2">
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default function mount(rootId: string, propsScriptId: string) {
+  const root = document.getElementById(rootId);
+  const propsNode = document.getElementById(propsScriptId);
+  if (!root || !propsNode) return;
+
+  const props = JSON.parse(propsNode.textContent ?? "null") as {
+    initialTodos: Array<{ id: number; title: string }>;
+  };
+
+  render(<TodosIsland {...props} />, root);
+}
+```
+
+## Common Patterns
+
+### Page Route
+```tsx
+app.get("/", (c) => {
+  return c.html(
+    <Layout title="Page">
+      <Island entry="page.client" props={{}} />
+    </Layout>
+  );
+});
+```
+
+### Typed JSON Response
+```ts
+return c.json({ message: "Created" }, 201);
+```
+
+### Client RPC Call
+```ts
+const res = await client.index.$post({
+  json: { title: "Hello" },
+});
 ```
 
 ## Pitfalls: Read Before Coding
 
-These are common mistakes. Avoid them.
+### Always Use Explicit JSON Status Codes
+Typed RPC works best when every branch returns `c.json(..., status)`.
 
-### CSRF on Mutating Requests
-Thrust enables CSRF protection globally. In **tests**, all `POST`, `PATCH`, `PUT`, `DELETE` requests need an `Origin` header or they will get a `403`:
 ```ts
-// Bad: returns 403
-const res = await app.request("/items", { method: "POST", body: form });
+// Bad
+return c.notFound();
 
 // Good
-const res = await app.request("/items", {
+return c.json({ error: "Not found" }, 404);
+```
+
+### Set Content-Type Headers in Tests
+When testing JSON or form validators, set the correct `Content-Type` header.
+
+```ts
+const res = await app.request("/todos/api", {
   method: "POST",
-  headers: { Origin: "http://localhost" },
-  body: form,
+  headers: {
+    "Content-Type": "application/json",
+    Origin: "http://localhost",
+  },
+  body: JSON.stringify({ title: "Hello" }),
 });
 ```
 
-### Drizzle + bun:sqlite: Use `.get()` After `.returning()`
-With bun:sqlite, `.returning()` alone is **not** iterable. Always chain `.get()` for a single row:
-```ts
-// Bad: runtime crash ("is not iterable")
-const [created] = db.insert(items).values({ name }).returning();
+### CSRF Still Applies to Mutating Requests
+`POST`, `PATCH`, `PUT`, and `DELETE` tests still need an `Origin` header because CSRF protection is enabled globally.
 
-// Good
-const created = db.insert(items).values({ name }).returning().get();
-```
+### Do Not Import Server-Only Modules Into `*.client.tsx`
+Never import database clients, Bun-only APIs, or server entry files into browser islands.
+Add `/** @jsxImportSource hono/jsx/dom */` at the top of client island files.
 
-### HTMX: Use Absolute Paths in `hx-*` Attributes
-Feature routes are mounted on sub-paths (for example `/notes`). HTMX attributes must use **full absolute paths**, not relative:
-```tsx
-// Bad: resolves to current page path, not /notes/5
-hx-delete="/5"
+### Keep RPC Types Feature-Local
+Prefer:
+- `type TodosApiType = typeof todosApi`
 
-// Good
-hx-delete={`/notes/${id}`}
-```
+Do not build one global mega-client unless you have a very strong reason.
 
-### HTMX: `hx-on` Event Attributes in JSX
-Hono JSX does **not** support `hx-on::after-request` (double colon namespace syntax). Use the `hx-on:` prefix with a spread:
-```tsx
-// Bad: JSX parse error ("Expected identifier after hx-on:")
-<form hx-on::after-request="this.reset()" />
+### Use the Standard Island Mount Helper
+Do not invent a custom mount protocol for each feature. Use `src/lib/island.tsx` and the default `mount(rootId, propsScriptId)` shape.
 
-// Good: use spread for namespaced attributes
-<form {...{ "hx-on:htmx:after-request": "this.reset()" }} />
-```
+### Keep Islands Small
+If most of a page is static, render it on the server. Only move the interactive subtree into a client island.
 
-### HTMX: Partial Swaps Lose Surrounding State
-When using `hx-target` to replace only part of a page (for example a list), any UI state *outside* that target (dropdown selections, scroll position) is preserved. But if you accidentally swap a **parent** element that contains both the control and the list, the control resets. Keep your `hx-target` as narrow as possible.
-
-### Layout: Always Import from `src/lib/layout.tsx`
-Never import `Layout` from `index.tsx` - this causes circular imports when `index.tsx` imports your feature route.
-```tsx
-// Bad: circular import crash ("Cannot access before initialization")
-import { Layout } from "../index";
-
-// Good
-import { Layout } from "../lib/layout";
-```
-
-### Large Feature Files: Split When Needed
-If a feature file grows beyond about 200 lines, split helper components into `src/lib/` while keeping routes in the feature file. The route handlers stay in `src/features/`, shared UI components move to `src/lib/`.
+### Large Feature Files: Split Carefully
+If `feature.tsx` grows too large, split only genuinely shared pieces into `src/lib/`. Keep the server routes in `feature.tsx` and the browser logic in `feature.client.tsx`.

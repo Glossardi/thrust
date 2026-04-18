@@ -57,6 +57,10 @@ if (!existsSync(path.join(appDir, ".gitignore"))) {
   console.error("Generated app is missing .gitignore");
   process.exit(1);
 }
+if (!existsSync(path.join(appDir, "scripts", "build-client.ts"))) {
+  console.error("Generated app is missing scripts/build-client.ts");
+  process.exit(1);
+}
 if (existsSync(path.join(appDir, "bun.lock"))) {
   console.error("Generated app should not include bun.lock");
   process.exit(1);
@@ -67,6 +71,10 @@ if (!existsSync(path.join(appDir, "src", "index.tsx"))) {
 }
 if (!existsSync(path.join(appDir, "README.md"))) {
   console.error("Generated app is missing README.md");
+  process.exit(1);
+}
+if (!("build:client" in (generatedPkg.scripts ?? {}))) {
+  console.error("Generated app is missing build:client script");
   process.exit(1);
 }
 if (generatedReadme.includes("## Scaffolder variants")) {
