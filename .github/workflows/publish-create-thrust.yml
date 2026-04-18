@@ -30,6 +30,9 @@ jobs:
       - name: Sync template
         run: bun run create-thrust:sync
 
+      - name: Build client bundles
+        run: bun run build:client
+
       - name: Run tests
         run: bun run test
 

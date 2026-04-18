@@ -47,6 +47,7 @@ Bad candidates for core:
 
 ```bash
 bun install
+bun run build:client
 bun run build:css
 bun run test
 bun dev
@@ -65,6 +66,7 @@ bun run create-thrust:sync
 
 Please make sure:
 - tests pass
+- client bundles build successfully
 - CSS builds successfully
 - scaffolder checks pass (`bun run create-thrust:variant-test` and `bun run create-thrust:pack-test` when relevant)
 - docs are updated when behavior changes

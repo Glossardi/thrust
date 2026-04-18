@@ -1,23 +1,19 @@
 # TESTCASE.md - Thrust Framework Stress Test
 
-> **Purpose:** Fork this repo, give the prompt below to any AI coding agent, and evaluate how well Thrust + AGENT.md guide the agent to produce correct, working code.
-
----
+> Purpose: fork this repo, give the prompt below to any AI coding agent, and evaluate how well Thrust plus AGENT.md guide the agent to produce correct, working code under the RPC + islands architecture.
 
 ## How to Use
 
 1. Fork the Thrust repo
-2. `bun install && bun run build:css`
+2. `bun install && bun run build:client && bun run build:css`
 3. Verify base tests pass: `bun test src/`
-4. Copy the **Agent Prompt** below into your AI coding agent
-5. Let the agent work - **do not help it**
-6. Score the result using the **Rubric** at the bottom
-
----
+4. Copy the agent prompt below into your AI coding agent
+5. Let the agent work without help
+6. Score the result using the rubric at the bottom
 
 ## The Agent Prompt
 
-Copy everything between the `---` markers:
+Copy everything between the markers.
 
 ---
 
@@ -25,53 +21,82 @@ Copy everything between the `---` markers:
 
 Read `AGENT.md` and `STATE.md` first. Then implement the following feature:
 
-**Build a "Notes" feature for this Thrust app.**
+Build a "Notes" feature for this Thrust app.
 
 Requirements:
 
-**1. Database**
+### 1. Database
 Add a `notes` table to `src/lib/db.ts` with these columns:
 - `id` - integer, primary key, auto-increment
 - `title` - text, not null
 - `content` - text, not null, default empty string
-- `category` - text, not null, default "general" (allowed values: "general", "work", "personal")
-- `pinned` - boolean (integer), not null, default false
-- `createdAt` - text, not null, default current timestamp (ISO string)
+- `category` - text, not null, default "general" with allowed values `general`, `work`, `personal`
+- `pinned` - boolean integer, not null, default false
+- `createdAt` - text, not null, default current ISO timestamp
 
-**2. Routes & UI (all in `src/features/notes.tsx`)**
+### 2. Feature files
+Create these files:
+- `src/features/notes.tsx`
+- `src/features/notes.client.tsx`
+- `src/features/notes.test.ts`
 
-| Route | Method | Behavior |
-|-------|--------|----------|
-| `/notes` | GET | Full page: shows all notes as DaisyUI cards, pinned notes first. Include a "create note" form and a category filter dropdown. |
-| `/notes` | POST | Create a note from form data. Validate: title must be 1-100 chars, category must be one of the allowed values. Return the new note card as an HTML fragment (for HTMX append). |
-| `/notes/:id` | DELETE | Delete the note. Return empty 200. |
-| `/notes/:id/pin` | PATCH | Toggle the `pinned` state. Return the updated note card fragment. |
-| `/notes/filter` | GET | Accept `?category=work` query param. Return only the filtered note cards as HTML fragment (replaces the note list via HTMX). If category is "all", return all notes. |
+### 3. Server routes in `src/features/notes.tsx`
+Implement:
 
-**3. UI Details**
-- Each note card should show: title, content (truncated to 120 chars), category as a DaisyUI badge, pin icon/button, delete button.
-- Pinned notes should have a visual indicator (e.g. `border-primary` or a pin icon).
-- The category filter dropdown should use `hx-get="/notes/filter"` with `hx-target` to replace the notes list without full page reload.
-- The create form should use HTMX to add the new note without page reload.
-- Show an empty state message when no notes exist: "No notes yet. Create your first one!"
+#### Page route
+- `GET /notes`
+- returns a full server-rendered page using `Layout`
+- includes a mounted client island for the interactive UI
 
-**4. Tests (in `src/features/notes.test.ts`)**
+#### RPC routes
+Mount typed JSON routes under `/notes/api`:
+- `GET /notes/api` - return all notes, pinned notes first
+- `POST /notes/api` - create a note
+- `PATCH /notes/api/:id/pin` - toggle pinned state
+- `DELETE /notes/api/:id` - delete a note
+- `GET /notes/api/filter?category=work` - return only notes in that category
+
+Rules:
+- validate inputs with `zod` and `@hono/zod-validator`
+- return `c.json(..., status)` with explicit status codes
+- use a feature-local exported RPC type for the client island
+
+### 4. Client island in `src/features/notes.client.tsx`
+Build a small browser island using `hono/jsx/dom` and `useState`.
+
+The island should:
+- render the notes list
+- render a create form
+- render a category filter
+- call the backend with `hc()`
+- keep local UI state for loading, notes list, form values, and current filter
+
+### 5. UI behavior
+- show pinned notes first
+- show category as a DaisyUI badge
+- show a pin toggle button
+- show a delete button
+- show an empty state when no notes exist: "No notes yet. Create your first one!"
+- show button loading feedback during mutations
+
+### 6. Tests in `src/features/notes.test.ts`
 Write tests for:
-- GET /notes returns 200 with page structure
-- POST /notes creates a note and returns HTML fragment
-- POST /notes rejects invalid title (empty) with 400
-- POST /notes rejects invalid category with 400
-- DELETE /notes/:id works
-- PATCH /notes/:id/pin toggles pin state
-- GET /notes/filter?category=work returns only work notes
-- GET /notes/filter?category=all returns all notes
+- `GET /notes` returns 200 with page structure
+- `GET /notes/api` returns notes JSON
+- `POST /notes/api` creates a note and returns 201
+- `POST /notes/api` rejects invalid title with 400
+- `POST /notes/api` rejects invalid category with 400
+- `DELETE /notes/api/:id` works
+- `PATCH /notes/api/:id/pin` toggles pin state
+- `GET /notes/api/filter?category=work` returns only work notes
+- `GET /notes/api/filter?category=all` returns all notes
 
-**5. Integration**
-- Mount the notes route in `src/index.tsx`
-- Add a "Notes" link to the home page
-- Update `STATE.md`
+### 7. Integration
+- mount the notes route in `src/index.tsx`
+- add a "Notes" link to the home page
+- update `STATE.md`
 
-Follow the AGENT.md protocol. TDD first. Run `bun test` and make sure everything passes before telling me you're done.
+Follow the AGENT.md protocol. TDD first. Run `bun run build:client` and `bun test` before telling me you are done.
 
 ### PROMPT END
 
@@ -79,179 +104,141 @@ Follow the AGENT.md protocol. TDD first. Run `bun test` and make sure everything
 
 ## Scoring Rubric
 
-Score each dimension **0-3**. Total possible: **30 points**.
+Score each dimension 0-3. Total possible: 30 points.
 
 ### 1. TDD Protocol Compliance (0-3)
 | Score | Criteria |
 |-------|----------|
 | 0 | No tests written, or tests written after implementation |
-| 1 | Tests exist but were clearly written alongside/after code |
-| 2 | Tests created first, but agent didn't run them to verify failure before implementing |
-| 3 | Full TDD cycle: tests written -> ran and failed -> code written -> ran and passed |
+| 1 | Tests exist but were clearly written alongside or after code |
+| 2 | Tests created first, but agent did not run them to verify failure before implementing |
+| 3 | Full TDD cycle: tests written, failed, code written, passed |
 
 ### 2. AGENT.md Rule Adherence (0-3)
 | Score | Criteria |
 |-------|----------|
 | 0 | Agent ignored AGENT.md entirely |
-| 1 | Agent followed some rules but violated locality (e.g. separate component files) or used JSON responses |
-| 2 | Agent followed most rules, minor violations |
-| 3 | Perfect adherence: locality of behavior, HTML fragments, HTMX patterns, minimal code |
+| 1 | Agent followed some rules but broke the feature slice or typed RPC model |
+| 2 | Agent followed most rules with minor violations |
+| 3 | Perfect adherence: feature slice, SSR page, typed RPC, small island, minimal code |
 
 ### 3. STATE.md Updated (0-3)
 | Score | Criteria |
 |-------|----------|
 | 0 | STATE.md not touched |
-| 1 | STATE.md updated but incomplete (missing routes or table info) |
-| 2 | STATE.md updated with most info |
-| 3 | STATE.md accurately reflects all new routes, table schema, and feature file |
+| 1 | STATE.md updated but incomplete |
+| 2 | STATE.md updated with most relevant info |
+| 3 | STATE.md accurately reflects routes, table, feature slice, and shared modules |
 
 ### 4. Tests Pass - `bun test src/` (0-3)
 | Score | Criteria |
 |-------|----------|
-| 0 | Tests don't run (import errors, syntax errors) |
+| 0 | Tests do not run |
 | 1 | Some tests pass, some fail |
-| 2 | All tests pass, but existing app tests broke |
-| 3 | All new AND existing tests pass (2 base + 8+ new) |
+| 2 | All new tests pass, but existing tests broke |
+| 3 | All new and existing tests pass |
 
 ### 5. Code Quality (0-3)
 | Score | Criteria |
 |-------|----------|
-| 0 | Code is messy, has dead code, wrong patterns |
-| 1 | Code works but has issues (no validation, no error handling, duplicated logic) |
-| 2 | Clean code, proper validation, handles edge cases |
-| 3 | Excellent: proper Zod/manual validation, clean components, good HTMX patterns, pinned-first sorting |
+| 0 | Code is messy, duplicated, or breaks the architecture |
+| 1 | Code works but has obvious issues |
+| 2 | Clean code, good validation, reasonable state handling |
+| 3 | Excellent: clean route structure, small island, pinned-first sorting, explicit statuses |
 
-### 6. HTMX Correctness (0-3)
+### 6. RPC Correctness (0-3)
 | Score | Criteria |
 |-------|----------|
-| 0 | No HTMX used, or JSON responses instead of HTML |
-| 1 | Basic HTMX but broken (wrong targets, wrong swap modes) |
-| 2 | HTMX works for create/delete but filter is broken or causes full page reload |
-| 3 | All interactions work correctly: create appends, delete removes, pin updates in-place, filter replaces list |
+| 0 | No typed RPC path, or island does not use `hc()` |
+| 1 | RPC exists but types or status handling are weak |
+| 2 | RPC works with minor inconsistencies |
+| 3 | RPC is typed, validated, explicit, and used correctly from the island |
 
 ### 7. DB Schema Correctness (0-3)
 | Score | Criteria |
 |-------|----------|
-| 0 | Table not created or major schema errors |
-| 1 | Table exists but missing columns or wrong types |
-| 2 | Schema correct but no auto-migrate or missing from drizzle schema |
-| 3 | Schema exactly matches spec, auto-migrate included, exports available |
+| 0 | Table missing or incorrect |
+| 1 | Table exists but missing columns or wrong defaults |
+| 2 | Schema mostly correct |
+| 3 | Schema matches spec and auto-migrate is included |
 
-### 8. Validation & Error Handling (0-3)
+### 8. Validation and Error Handling (0-3)
 | Score | Criteria |
 |-------|----------|
-| 0 | No validation at all |
-| 1 | Basic validation (rejects empty title) |
-| 2 | Validates title length + category enum |
-| 3 | Full validation: title 1-100 chars, category enum, proper 400 responses with messages, handles non-existent IDs with 404 |
+| 0 | No validation |
+| 1 | Basic validation only |
+| 2 | Title length and category enum validated |
+| 3 | Full validation plus explicit 400 and 404 handling |
 
 ### 9. UI/DX Quality (0-3)
 | Score | Criteria |
 |-------|----------|
-| 0 | Broken HTML or no styling |
-| 1 | Basic HTML that works but looks rough |
-| 2 | Uses DaisyUI components, reasonable layout |
-| 3 | Polished: cards with badges, pin indicator, empty state, category filter, responsive |
+| 0 | Broken UI |
+| 1 | Barely functional UI |
+| 2 | Reasonable DaisyUI layout |
+| 3 | Polished enough: loading states, badges, empty state, clear actions |
 
-### 10. Self-Correction & Debugging (0-3)
+### 10. Self-Correction and Debugging (0-3)
 | Score | Criteria |
 |-------|----------|
-| 0 | Agent delivered broken code and said "done" |
-| 1 | Agent encountered errors but needed user help to fix |
-| 2 | Agent hit errors and self-corrected most issues |
-| 3 | Agent ran tests, found failures, fixed them independently, and confirmed all pass |
-
----
+| 0 | Agent delivered broken code and said done |
+| 1 | Agent needed user help to fix obvious issues |
+| 2 | Agent self-corrected most issues |
+| 3 | Agent found failures, fixed them, and confirmed all checks pass |
 
 ## Known Pitfalls to Watch For
 
-These are specific things that agents frequently get wrong with Thrust. Check for these:
+### Pitfall 1: Missing Content-Type in Tests
+JSON validators receive `{}` if `Content-Type: application/json` is missing.
 
-### Pitfall 1: CSRF on POST/PATCH/DELETE in Tests
-The CSRF middleware requires an `Origin` header. If the agent's tests don't include `headers: { Origin: "http://localhost" }` on mutating requests, they'll get 403s.
+### Pitfall 2: Missing Origin Header in Mutating Tests
+CSRF protection still applies to POST, PATCH, PUT, and DELETE requests.
 
-**Watch for:** Agent confused by 403 errors, not realizing it's CSRF.
+### Pitfall 3: Untyped Not Found Responses
+Using `c.notFound()` without an intentional typed contract can make client-side response typing weak or unknown.
 
-### Pitfall 2: Drizzle `.returning()` with bun:sqlite
-In Drizzle with bun:sqlite, `db.insert(...).returning()` does NOT return an array you can destructure. You need `.returning().get()` for a single row.
+### Pitfall 4: Server Imports in `*.client.tsx`
+The island must not import server-only modules such as `bun:sqlite`, `db`, or Bun-only APIs.
 
-**Watch for:** Agent writing `const [created] = db.insert(...).returning()` -> runtime crash.
+### Pitfall 5: Oversized Island Scope
+If the island tries to own the whole page instead of the interactive subtree, the feature becomes harder to reason about and easier to break.
 
-### Pitfall 3: Feature Route Mounting
-The feature creates a sub-router (`new Hono()`), but when mounted at `/notes`, all internal routes are relative. The HTMX `hx-*` attributes need **absolute paths** (e.g., `hx-delete="/notes/5"` not `hx-delete="/5"`).
-
-**Watch for:** HTMX targeting wrong URLs because the agent used relative paths.
-
-### Pitfall 4: Layout Import Cycle
-The existing `app.test.ts` imports `Layout` from `../index`. If the agent doesn't realize `index.tsx` exports `Layout`, they might duplicate the full HTML boilerplate.
-
-**Watch for:** Duplicated `<html><head>...</head>` in the notes feature instead of using the shared Layout.
-
-### Pitfall 5: Filter State Mismatch
-The category filter dropdown should update the note list via HTMX, but the dropdown's selected value should persist visually. If the agent just replaces the card container, the dropdown resets.
-
-**Watch for:** Dropdown resets to "all" after filtering, or filter replaces the whole page.
-
-### Pitfall 6: `createdAt` Default Value
-SQLite doesn't have a native `DEFAULT CURRENT_TIMESTAMP` that produces ISO strings. The agent needs to handle this in code (e.g., `new Date().toISOString()`) or use `DEFAULT (datetime('now'))`.
-
-**Watch for:** `createdAt` being `null` or a Unix timestamp instead of ISO string.
-
-### Pitfall 7: Pinned-First Sorting
-The spec says "pinned notes first." This requires an `ORDER BY pinned DESC` in the query. Many agents forget sorting.
-
-**Watch for:** Notes appearing in insertion order regardless of pin state.
-
----
+### Pitfall 6: Missing Pinned-First Sorting
+The list must return pinned notes first on the server side.
 
 ## Quick Evaluation Checklist
 
-After the agent says "done", run these commands:
+After the agent says done, run:
 
 ```bash
-# 1. Do ALL tests pass?
+# 1. Build the client bundle
+bun run build:client
+
+# 2. Do all tests pass?
 bun test src/
 
-# 2. Does the server start without errors?
-bun run src/index.tsx &
+# 3. Start the server
+PORT=3111 bun run src/index.tsx &
 sleep 1
 
-# 3. Do the routes work?
-curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/notes    # expect 200
-curl -s http://localhost:3000/notes | grep -c "No notes yet"          # expect 1
+# 4. Notes page works?
+curl -s -o /dev/null -w "%{http_code}" http://localhost:3111/notes
 
-# 4. Can we create a note?
-curl -s -X POST http://localhost:3000/notes \
+# 5. API create works?
+curl -s -X POST http://localhost:3111/notes/api \
   -H "Origin: http://localhost" \
-  -F "title=Test" -F "content=Hello" -F "category=work" \
-  | grep -c "Test"                                                     # expect 1
+  -H "Content-Type: application/json" \
+  -d '{"title":"Test","content":"Hello","category":"work"}'
 
-# 5. Does filter work?
-curl -s "http://localhost:3000/notes/filter?category=work" \
-  | grep -c "Test"                                                     # expect 1
-curl -s "http://localhost:3000/notes/filter?category=personal" \
-  | grep -c "Test"                                                     # expect 0
-
-# 6. Was STATE.md updated?
-grep -c "notes" STATE.md                                               # expect 3+
-
-# 7. Cleanup
+# 6. Cleanup
 kill %1
 ```
-
----
 
 ## Interpretation
 
 | Score | Rating | Meaning |
 |-------|--------|---------|
-| 27-30 | Excellent | Framework guides agents perfectly |
-| 21-26 | Good | Framework works, but AGENT.md needs more guidance |
-| 15-20 | Fair | Significant gaps in documentation/patterns |
-| 0-14 | Needs Work | Framework confuses agents more than it helps |
-
-**What a low score tells you:**
-- Score < 15 -> AGENT.md needs more explicit examples and pitfall warnings
-- Low "HTMX Correctness" -> Need an HTMX pattern cookbook in AGENT.md
-- Low "Self-Correction" -> Tests are too hard to debug; improve error messages
-- Low "TDD Compliance" -> TDD workflow needs stricter step-by-step instructions
+| 27-30 | Excellent | Framework guides agents extremely well |
+| 21-26 | Good | Framework works well with minor rough edges |
+| 15-20 | Fair | Important guidance gaps remain |
+| 0-14 | Needs Work | Framework still causes large agent failure modes |

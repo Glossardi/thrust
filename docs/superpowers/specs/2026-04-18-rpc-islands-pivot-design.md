@@ -1,7 +1,7 @@
 # Thrust RPC + Islands Pivot Design
 
 Date: 2026-04-18
-Status: Approved in chat, pending written-spec review
+Status: Approved
 Owner: Thrust maintainers
 
 ## Summary
