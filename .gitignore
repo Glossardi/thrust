@@ -1,8 +1,14 @@
 node_modules/
+**/node_modules/
 data/
+**/data/
 drizzle/
 public/style.css
+**/public/style.css
+**/public/islands/
 tmp-npm-cache/
+**/tmp-npm-cache/
+**/test-results/
 testcase-run/
 *.db
 *.db-journal

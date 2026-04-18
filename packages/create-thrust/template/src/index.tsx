@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import { csrf } from "hono/csrf";
 import { secureHeaders } from "hono/secure-headers";
+import { env } from "./lib/env";
 import { Layout } from "./lib/layout";
 
 // Features
@@ -68,10 +69,9 @@ app.get("/", (c) =>
 export { app };
 
 // Start server
-const port = Number(process.env.PORT) || 3000;
-console.log(`Thrust running at http://localhost:${port}`);
+console.log(`Thrust running at http://localhost:${env.PORT}`);
 
 export default {
-  port,
+  port: env.PORT,
   fetch: app.fetch,
 };

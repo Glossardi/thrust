@@ -12,6 +12,7 @@
 ## Shared Modules
 - `src/lib/layout.tsx` - HTML layout shell with Thrust theme
 - `src/lib/island.tsx` - Standard server-side island mount helper
+- `src/lib/env.ts` - Shared environment parsing and defaults
 - `src/lib/db.ts` - Database connection + schema (opt-in)
 - `src/lib/auth.ts` - Better Auth config (opt-in)
 

@@ -46,6 +46,7 @@ function checkCommon(dir, expectedName) {
   assert(existsSync(path.join(dir, "scripts", "build-client.ts")), `Generated app is missing scripts/build-client.ts: ${expectedName}`);
   assert(existsSync(path.join(dir, "scripts", "dev.ts")), `Generated app is missing scripts/dev.ts: ${expectedName}`);
   assert(!readme.includes("## Scaffolder variants"), `Generated README still includes scaffolder section: ${expectedName}`);
+  assert(!readme.includes("## Official reference app"), `Generated README still includes reference app section: ${expectedName}`);
   assert(readme.includes("bun install\nbun run build:client\nbun run build:css\nbun dev"), `Generated README quickstart was not rewritten: ${expectedName}`);
   assert("build:client" in (pkg.scripts ?? {}), `Generated app is missing build:client: ${expectedName}`);
   assert("build:client:watch" in (pkg.scripts ?? {}), `Generated app is missing build:client:watch: ${expectedName}`);

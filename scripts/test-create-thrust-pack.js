@@ -81,6 +81,10 @@ if (generatedReadme.includes("## Scaffolder variants")) {
   console.error("Generated README still includes scaffolder documentation");
   process.exit(1);
 }
+if (generatedReadme.includes("## Official reference app")) {
+  console.error("Generated README still includes reference app documentation");
+  process.exit(1);
+}
 
 rmSync(tarballPath, { force: true });
 rmSync(tmpRoot, { recursive: true, force: true });
