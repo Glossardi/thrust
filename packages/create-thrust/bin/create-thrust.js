@@ -61,7 +61,8 @@ function updateReadme(appDir, opts) {
     "## Quickstart\n\n```bash\nbun install\nbun run build:client\nbun run build:css\nbun dev\n```\n\nOpen [http://localhost:3000](http://localhost:3000). That's it.\n\n## Commands\n"
   );
 
-  readme = readme.replace(/## Scaffolder variants[\s\S]*?## Architecture\n/, "## Architecture\n");
+  readme = readme.replace(/## Scaffolder variants[\s\S]*?## Official reference app\n/, "## Official reference app\n");
+  readme = readme.replace(/## Official reference app[\s\S]*?## Architecture\n/, "## Architecture\n");
 
   if (!opts.db) {
     readme = readme.replace("| `bun run db:reset` | Delete and recreate the database |\n", "");

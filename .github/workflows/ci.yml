@@ -63,3 +63,31 @@ jobs:
 
       - name: Pack test create-thrust
         run: bun run create-thrust:pack-test
+
+      - name: Install notes reference app dependencies
+        run: |
+          cd examples/notes-reference
+          bun install
+
+      - name: Build notes reference app
+        run: |
+          cd examples/notes-reference
+          mkdir -p public
+          bun run build:client
+          bun run build:css
+          bun run test
+
+      - name: Install browser QA dependencies
+        run: |
+          cd qa
+          bun install
+
+      - name: Install Playwright browser
+        run: |
+          cd qa
+          bun run install:browsers --with-deps
+
+      - name: Browser smoke test notes reference app
+        run: |
+          cd qa
+          bun run test:notes-reference

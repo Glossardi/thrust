@@ -16,6 +16,7 @@
    bun run build:css
    bun run create-thrust:variant-test
    bun run create-thrust:pack-test
+   cd qa && bun install && bun run install:browsers && bun run test:notes-reference && cd ..
    ```
 3. Commit and push to `main`
 4. Trigger the GitHub Actions workflow:

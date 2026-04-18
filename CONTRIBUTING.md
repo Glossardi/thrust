@@ -69,6 +69,7 @@ Please make sure:
 - client bundles build successfully
 - CSS builds successfully
 - scaffolder checks pass (`bun run create-thrust:variant-test` and `bun run create-thrust:pack-test` when relevant)
+- run the browser smoke test when changing islands or RPC interaction (`cd qa && bun install && bun run install:browsers && bun run test:notes-reference`)
 - docs are updated when behavior changes
 - `STATE.md` is updated if routes, tables, or starter structure changed
 

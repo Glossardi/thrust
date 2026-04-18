@@ -64,8 +64,6 @@ async function bundleClientEntries(entries: string[]) {
       "browser",
       "--format",
       "esm",
-      "--sourcemap",
-      "linked",
     ], {
       cwd: root,
       stdout: "pipe",

@@ -52,6 +52,27 @@ node packages/create-thrust/bin/create-thrust.js my-app --db     # include db.ts
 node packages/create-thrust/bin/create-thrust.js my-app --auth   # include db.ts + auth.ts
 ```
 
+## Official reference app
+
+A full, concrete example of the recommended RPC + islands architecture lives in:
+
+```text
+examples/notes-reference/
+```
+
+Use it when you want to see a real feature slice with:
+- server-rendered page routes
+- typed JSON RPC routes
+- Zod validation
+- `hono/jsx/dom` island state
+- server tests and browser smoke coverage
+
+Browser QA for the reference app lives in:
+
+```text
+qa/
+```
+
 ## Architecture
 
 ```text
@@ -60,6 +81,7 @@ src/
 |- lib/
 |  |- layout.tsx          # Shared HTML layout (import in features)
 |  |- island.tsx          # Standard server-side island mount helper
+|  |- env.ts              # Shared environment parsing and defaults
 |  |- db.ts               # Schema + bun:sqlite connection (opt-in)
 |  `- auth.ts             # Better Auth (opt-in)
 `- features/

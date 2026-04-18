@@ -1,0 +1,12 @@
+{
+  "name": "thrust-qa",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "install:browsers": "playwright install chromium",
+    "test:notes-reference": "playwright test tests/notes-reference.spec.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  }
+}

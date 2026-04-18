@@ -1,0 +1,30 @@
+{
+  "name": "notes-reference",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Reference Thrust app demonstrating typed RPC plus islands",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run scripts/dev.ts",
+    "dev:server": "bun run --watch src/index.tsx",
+    "test": "bun test src/",
+    "test:watch": "bun test --watch src/",
+    "build:client": "bun run scripts/build-client.ts",
+    "build:client:watch": "bun run scripts/build-client.ts --watch",
+    "build:css": "bunx @tailwindcss/cli -i tailwind.css -o public/style.css",
+    "build:css:watch": "bunx @tailwindcss/cli -i tailwind.css -o public/style.css --watch",
+    "db:reset": "rm -rf data/app.db data/app.db-wal data/app.db-shm && echo 'Database reset'"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.7.0",
+    "drizzle-orm": "^0.44.0",
+    "hono": "^4.7.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "@types/bun": "^1.2.0",
+    "daisyui": "^5.0.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

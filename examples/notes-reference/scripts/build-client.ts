@@ -31,9 +31,7 @@ function listClientEntries(dir: string): string[] {
 }
 
 function snapshot(entries: string[]): string {
-  return entries
-    .map((file) => `${file}:${statSync(file).mtimeMs}`)
-    .join("|");
+  return entries.map((file) => `${file}:${statSync(file).mtimeMs}`).join("|");
 }
 
 function toOutputPath(entry: string) {
@@ -63,11 +61,11 @@ async function bundleClientEntries(entries: string[]) {
       "--target",
       "browser",
       "--format",
-      "esm",
+      "esm"
     ], {
       cwd: root,
       stdout: "pipe",
-      stderr: "pipe",
+      stderr: "pipe"
     });
 
     if (result.exitCode !== 0) {
@@ -81,8 +79,7 @@ async function bundleClientEntries(entries: string[]) {
 }
 
 async function buildOnce() {
-  const entries = listClientEntries(featuresDir);
-  await bundleClientEntries(entries);
+  await bundleClientEntries(listClientEntries(featuresDir));
 }
 
 async function watchAndBuild() {
